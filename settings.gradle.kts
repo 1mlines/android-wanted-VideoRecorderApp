@@ -14,4 +14,6 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "android-wanted-VideoRecorderApp"
-include("app")
+include(":presentation")
+include(":data")
+include(":domain")
