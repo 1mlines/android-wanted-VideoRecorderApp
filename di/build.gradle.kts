@@ -1,20 +1,18 @@
 @Suppress("UnstableApiUsage", "DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
     alias(libs.plugins.hilt.android)
 }
+
 android {
-    namespace = "com.preonboarding.videorecorder"
+    namespace = "com.example.di"
     compileSdk = 32
 
     defaultConfig {
-        applicationId = "com.preonboarding.videorecorder"
         minSdk = 21
         targetSdk = 32
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -35,40 +33,25 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    dataBinding {
-        enable = true
-    }
-    viewBinding {
-        enable = true
-    }
 }
 
 dependencies {
 
-    implementation(project(":domain"))
-    implementation(project(":data"))
-    implementation(project(":di"))
+    implementation(project(mapOf("path" to ":data")))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.android.material)
-    implementation(libs.androidx.activity.ktx)
+    implementation(project(mapOf("path" to ":domain")))
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso)
 
-    // Hilt
+    // room
+    implementation(libs.bundles.room)
+    kapt(libs.room.compiler)
+
+    // hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
-
-    // Timber
-    implementation(libs.timber)
-
-    // Coroutine
-    implementation(libs.coroutine)
-
-    // Lifecycle
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.lifecycle.viewModel.ktx)
 }
