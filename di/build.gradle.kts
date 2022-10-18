@@ -37,12 +37,11 @@ android {
 
 dependencies {
 
-    implementation(project(mapOf("path" to ":data")))
+    implementation(project(":data"))
+    implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(project(mapOf("path" to ":domain")))
-
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso)
