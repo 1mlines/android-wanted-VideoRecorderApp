@@ -8,7 +8,7 @@ import javax.inject.Inject
 class SaveVideoUseCaseImpl @Inject constructor(
     private val videoRepository: VideoRepository
 ): SaveVideoUseCase{
-    override suspend fun saveVideoData(video: Video) {
+    override suspend fun invoke(video: Video) {
         videoRepository.saveVideo(video)
     }
 }

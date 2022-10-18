@@ -23,19 +23,19 @@ class MainViewModel @Inject constructor(
 
     fun getVideoList() {
         viewModelScope.launch {
-            _videoList.postValue(getVideoListUseCase.getVideoDataList())
+            _videoList.postValue(getVideoListUseCase.invoke())
         }
     }
 
     fun saveVideo(video: Video) {
         viewModelScope.launch {
-            saveVideoUseCase.saveVideoData(video)
+            saveVideoUseCase.invoke(video)
         }
     }
 
     fun deleteVideo(video: Video) {
         viewModelScope.launch {
-            deleteVideoUseCase.deleteVideoData(video)
+            deleteVideoUseCase.invoke(video)
         }
     }
 }

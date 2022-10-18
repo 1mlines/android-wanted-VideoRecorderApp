@@ -8,7 +8,7 @@ import javax.inject.Inject
 class GetVideoListUseCaseImpl @Inject constructor(
     private val videoRepository: VideoRepository
 ) : GetVideoListUseCase {
-    override suspend fun getVideoDataList(): List<Video> {
+    override suspend fun invoke(): List<Video> {
         return videoRepository.getVideoList()
     }
 }
