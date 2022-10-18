@@ -1,7 +1,7 @@
 package com.preonboarding.videorecorder.data.di
 
-import com.preonboarding.videorecorder.data.source.FirebaseDataSource
-import com.preonboarding.videorecorder.data.source.FirebaseDataSourceImpl
+import com.preonboarding.videorecorder.data.repository.VideoRepositoryImpl
+import com.preonboarding.videorecorder.domain.repository.VideoRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -10,8 +10,8 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class DataSourceModule {
+abstract class RepositoryModule {
     @Binds
     @Singleton
-    abstract fun bindsDataSource(datasource: FirebaseDataSourceImpl): FirebaseDataSource
+    abstract fun bindsRepository(repository: VideoRepositoryImpl): VideoRepository
 }
