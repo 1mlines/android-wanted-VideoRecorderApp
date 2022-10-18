@@ -19,5 +19,8 @@ class TransactionTestActivty : AppCompatActivity() {
         binding.button.setOnClickListener {
             transactionViewModel.insertVideoData("")
         }
+        binding.button2.setOnClickListener {
+            transactionViewModel.deleteVideoData(1)
+        }
     }
 }
