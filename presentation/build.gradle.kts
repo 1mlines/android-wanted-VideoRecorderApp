@@ -71,4 +71,9 @@ dependencies {
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewModel.ktx)
+
+    //firebase
+    implementation(libs.firebase.bom)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
 }
