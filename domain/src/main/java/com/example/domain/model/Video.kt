@@ -5,15 +5,15 @@ package com.example.domain.model
  * @Time 2:32 PM
  */
 data class Video(
-    val id: Long,
-    val uri: String,
-    val date: String
+    val name: String = "",
+    val publishedAt: Long = 0L,
+    val uri: String = ""
 ) {
-    companion object {
-        val EMPTY = Video(
-            id = 0,
-            uri = "",
-            date = ""
-        )
-    }
+//    companion object {
+//        val EMPTY = Video(
+//            id = 0,
+//            uri = "",
+//            date = ""
+//        )
+//    }
 }
