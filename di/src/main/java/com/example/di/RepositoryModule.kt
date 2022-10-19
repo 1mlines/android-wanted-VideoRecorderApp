@@ -4,10 +4,9 @@ import com.example.data.repository.VideoRepositoryImpl
 import com.example.domain.repository.VideoRepository
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 
 /**
  * @Created by 김현국 2022/10/18
@@ -15,10 +14,10 @@ import javax.inject.Singleton
  */
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 abstract class RepositoryModule {
 
-    @Singleton
     @Binds
+    @ViewModelScoped
     abstract fun provideVideoRepository(repositoryImpl: VideoRepositoryImpl): VideoRepository
 }

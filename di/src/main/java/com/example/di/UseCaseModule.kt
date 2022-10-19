@@ -8,6 +8,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 
 /**
  * @Created by 김현국 2022/10/18
@@ -19,8 +20,10 @@ import dagger.hilt.android.components.ViewModelComponent
 abstract class UseCaseModule {
 
     @Binds
+    @ViewModelScoped
     abstract fun provideInsertVideoUseCase(insertVideoDataUseCaseImpl: InsertVideoDataUseCaseImpl): InsertVideoDataUseCase
 
     @Binds
+    @ViewModelScoped
     abstract fun provideDeleteVideoUseCase(deleteVideoDataUseCaseImpl: DeleteVideoDataUseCaseImpl): DeleteVideoDataUseCase
 }

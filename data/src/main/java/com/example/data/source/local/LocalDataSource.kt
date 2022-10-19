@@ -3,7 +3,6 @@ package com.example.data.source.local
 import androidx.room.withTransaction
 import com.example.data.source.local.model.VideoEntity
 import com.example.data.source.local.room.VideoDatabase
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -16,7 +15,6 @@ class LocalDataSource @Inject constructor(
     private val videoDao = videoDatabase.getVideoDao()
 
     suspend fun insertVideoData(videoEntity: VideoEntity) {
-        Timber.tag("tag").d(videoEntity.id.toString())
         videoDatabase.withTransaction {
             videoDao.insertVideoData(videoEntity = videoEntity)
         }

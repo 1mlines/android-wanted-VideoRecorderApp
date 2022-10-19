@@ -16,11 +16,11 @@ import javax.inject.Singleton
  */
 @Module
 @InstallIn(SingletonComponent::class)
-class DatabaseModule{
+class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideRoomDatabase(@ApplicationContext context: Context) : VideoDatabase {
+    fun provideRoomDatabase(@ApplicationContext context: Context): VideoDatabase {
         return Room.databaseBuilder(
             context,
             VideoDatabase::class.java,
