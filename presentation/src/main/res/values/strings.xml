@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">android-wanted-VideoRecorderApp</string>
+    <string name="recordVideo">RecordVideo</string>
 </resources>
