@@ -1,8 +1,10 @@
 package com.example.di
 
 import com.example.data.usecase.DeleteVideoDataUseCaseImpl
+import com.example.data.usecase.GetVideoListUseCaseImpl
 import com.example.data.usecase.InsertVideoDataUseCaseImpl
 import com.example.domain.usecase.DeleteVideoDataUseCase
+import com.example.domain.usecase.GetVideoListUseCase
 import com.example.domain.usecase.InsertVideoDataUseCase
 import dagger.Binds
 import dagger.Module
@@ -26,4 +28,8 @@ abstract class UseCaseModule {
     @Binds
     @ViewModelScoped
     abstract fun provideDeleteVideoUseCase(deleteVideoDataUseCaseImpl: DeleteVideoDataUseCaseImpl): DeleteVideoDataUseCase
+
+    @Binds
+    @ViewModelScoped
+    abstract fun provideGetVideoListUseCase(getVideoListUseCaseImpl: GetVideoListUseCaseImpl): GetVideoListUseCase
 }

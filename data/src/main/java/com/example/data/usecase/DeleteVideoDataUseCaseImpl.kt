@@ -11,7 +11,7 @@ import javax.inject.Inject
 class DeleteVideoDataUseCaseImpl @Inject constructor(
     private val videoRepository: VideoRepository
 ) : DeleteVideoDataUseCase {
-    override suspend fun invoke(id: Long) {
-        return videoRepository.deleteVideo(id = id)
+    override suspend fun invoke(name: String) {
+        return videoRepository.deleteVideo(name)
     }
 }

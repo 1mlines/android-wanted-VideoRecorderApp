@@ -28,7 +28,7 @@ class VideoListAdapter : ListAdapter<Video, VideoListAdapter.VideoViewHolder>(di
     companion object {
         val diffUtil = object : DiffUtil.ItemCallback<Video>() {
             override fun areItemsTheSame(oldItem: Video, newItem: Video): Boolean =
-                oldItem.id == newItem.id
+                oldItem.name == newItem.name
 
             override fun areContentsTheSame(oldItem: Video, newItem: Video): Boolean =
                 oldItem.hashCode() == newItem.hashCode()

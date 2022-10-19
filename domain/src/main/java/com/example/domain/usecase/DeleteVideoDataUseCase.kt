@@ -5,5 +5,5 @@ package com.example.domain.usecase
  * @Time 2:42 PM
  */
 interface DeleteVideoDataUseCase {
-    suspend operator fun invoke(id: Long)
+    suspend operator fun invoke(name: String)
 }

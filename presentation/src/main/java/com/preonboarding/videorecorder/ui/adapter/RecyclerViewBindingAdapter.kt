@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.domain.model.Video
 
 @BindingAdapter("app:items")
-fun RecyclerView.setItems(itemList: List<Video>) {
+fun RecyclerView.setItems(itemList: List<Video>?) {
     val videoListAdapter = VideoListAdapter()
     adapter = videoListAdapter
     videoListAdapter.submitList(itemList)

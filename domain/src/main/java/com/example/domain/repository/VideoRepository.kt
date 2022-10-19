@@ -1,5 +1,6 @@
 package com.example.domain.repository
 
+import com.example.domain.model.FirebaseResponse
 import com.example.domain.model.Video
 
 /**
@@ -10,5 +11,7 @@ interface VideoRepository {
 
     suspend fun insertVideo(video: Video)
 
-    suspend fun deleteVideo(id: Long)
+    suspend fun deleteVideo(name: String)
+
+    suspend fun getVideoList(): FirebaseResponse<List<Video>>
 }

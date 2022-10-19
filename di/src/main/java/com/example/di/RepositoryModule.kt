@@ -20,4 +20,5 @@ abstract class RepositoryModule {
     @Binds
     @ViewModelScoped
     abstract fun provideVideoRepository(repositoryImpl: VideoRepositoryImpl): VideoRepository
+
 }

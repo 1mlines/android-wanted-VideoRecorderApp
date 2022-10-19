@@ -15,6 +15,6 @@ interface VideoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertVideoData(videoEntity: VideoEntity)
 
-    @Query("DELETE FROM VideoEntity WHERE id = :id")
-    fun deleteVideoData(id: Long)
+    @Query("DELETE FROM VideoEntity WHERE name = :name")
+    fun deleteVideoData(name: String)
 }
