@@ -57,5 +57,11 @@ dependencies {
     // Timber
     implementation(libs.timber)
 
+    // paging3
+    implementation(libs.paging)
 
+    //firebase
+    implementation(libs.firebase.bom)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
 }

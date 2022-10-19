@@ -1,6 +1,7 @@
 buildscript {
     dependencies {
         classpath(libs.android.gradle)
+        classpath(libs.google.services)
     }
 }
 
