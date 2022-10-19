@@ -1,11 +1,13 @@
 package com.preonboarding.videorecorder.presentation.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.preonboarding.videorecorder.R
 import com.preonboarding.videorecorder.databinding.ActivityMainBinding
 import com.preonboarding.videorecorder.presentation.base.BaseActivity
+import com.preonboarding.videorecorder.presentation.ui.record.RecordActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,6 +19,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         super.onCreate(savedInstanceState)
         binding.viewModel = viewModel
         setUpDataBinding()
+
+        initView()
+
+    }
+
+    private fun initView() {
+        binding.btRecord.setOnClickListener {
+            startActivity(Intent(this@MainActivity,RecordActivity::class.java))
+        }
     }
 
     private fun setUpDataBinding() {
