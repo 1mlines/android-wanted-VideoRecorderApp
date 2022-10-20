@@ -63,3 +63,68 @@
 
 ## ⌨️ Coding
 - [android-style-guide](https://github.com/PRNDcompany/android-style-guide)의 코딩 컨벤션과 동일하게 진행합니다.
+
+## 이현섭
+
+화면전환
+
+```kotlin
+private fun itemClick(video: Video) {
+        val intent = Intent(this, PlayActivity::class.java)
+        intent.putExtra("video", video.uri)
+        startActivity(intent)
+    }
+
+    private fun deleteClick(video: Video) {
+        viewModel.deleteVideo(video)
+    }
+```
+
+녹화 목록 어답터 구현
+
+```kotlin
+class MainAdapter(
+    private val itemClick: (Video) -> Unit,
+    private val deleteClick: (Video) -> Unit,
+) : ListAdapter<Video, MainAdapter.MainViewHolder>(diffUtil) {
+
+    inner class MainViewHolder(private val binding: ItemVideoBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(video: Video) {
+            binding.video = video
+            binding.cvVideoItem.setOnClickListener {
+                itemClick(video)
+            }
+            binding.btnDelete.setOnClickListener {
+                deleteClick(video)
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainViewHolder {
+        val binding = ItemVideoBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MainViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: MainViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    companion object {
+        val diffUtil = object : DiffUtil.ItemCallback<Video>() {
+            override fun areItemsTheSame(oldItem: Video, newItem: Video): Boolean {
+                return oldItem.date == newItem.date
+            }
+
+            override fun areContentsTheSame(oldItem: Video, newItem: Video): Boolean {
+                return oldItem.hashCode() == newItem.hashCode()
+            }
+        }
+    }
+}
+```
+
+아쉬운점이나 더해야할점
+
+- 페이징을 사용해서 리사이클러뷰 구현
+- ui가 보기 좋지 않음
