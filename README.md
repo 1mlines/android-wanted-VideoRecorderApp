@@ -45,7 +45,31 @@
 
 - Domain Layer는 Repository interface와 UseCase interface을 포함하고 있으며 인터페이스의 구현체는 Data Layer에서 구현하였습니다.
 
-### 프로젝트 구조
+### 프로젝트 구조 - 멀티모듈
+<img src="https://user-images.githubusercontent.com/62296097/196951134-165fec0b-6a07-42d5-9431-9f71a2f11aa9.png">
+
+
+- Presentation Layer
+    - UI과 관련된 작업으로 구성되어있습니다.
+    - 대표적으로 Activity, Fragment, ViewModel이 있습니다.
+
+- Domain Layer
+    - 비지니스 로직에서 수행되어져야할 행동들을 Interface로 정의하고 제공됩니다.
+    - Presentation Layer에 제공되는 비지니스 모델이 포함됩니다. 
+    
+
+- Data Layer
+    - Domain Layer에서 정의된 Interface(Repository, Usecase)의 구현체와 DataSource가 존재합니다.
+    - Hilt에 의해 인터페이스의 구현체가 제공됩니다. 
+    - DataSource는 Local과 Remote로 나뉘어 각각 Room Database와 Firebase에 접근합니다.
+
+
+
+- Gradle
+    - KTS를 통해 gradle를 Kotlin Script로 구성했습니다. 
+- Version Catalog
+    - Library와 Plugin의 버전을 관리합니다.
+
 
 
 ___
