@@ -1,13 +1,16 @@
 package com.example.data.source.remote
 
 import android.net.Uri
-import com.example.data.util.safeGetCall
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import com.example.data.constant.PAGE_SIZE
 import com.example.data.util.safeSetCall
 import com.example.domain.model.FirebaseResponse
 import com.example.domain.model.Video
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class VideoRemoteDataSourceImpl @Inject constructor(
@@ -15,20 +18,9 @@ class VideoRemoteDataSourceImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
 ) : VideoRemoteDataSource {
     override suspend fun uploadVideoStorage(video: Video): FirebaseResponse<Nothing> {
-        val publishedAt = System.currentTimeMillis()
-        val fileName = "${publishedAt}.mp4"
         return safeSetCall {
-            firebaseStorage.reference.child(fileName).putFile(Uri.parse(video.uri))
+            firebaseStorage.reference.child(video.name).putFile(Uri.parse(video.uri))
         }
-
-//        firebaseStorage.reference.child(fileName)
-//            .putFile(uri)
-//            .addOnSuccessListener {
-//                uploadVideoFirestore(fileName, publishedAt)
-//            }
-//            .addOnFailureListener {
-//
-//            }
     }
 
     override suspend fun uploadVideoFirestore(video: Video): FirebaseResponse<Nothing> {
@@ -36,21 +28,18 @@ class VideoRemoteDataSourceImpl @Inject constructor(
             firebaseStorage.reference.child(video.name).downloadUrl.addOnSuccessListener {
                 firestore.collection("videos").add(video.copy(uri = it.toString()))
             }
-
         }
-//        firebaseStorage.reference.child(fileName).downloadUrl.addOnSuccessListener { uri ->
-//            firestore.collection("videos")
-//                .add(Video(name = fileName, publishedAt = publishedAt, uri = uri.toString()))
-//                .addOnSuccessListener {
-//                    Log.d("abc", "onCreate: success")
-//                }
-//        }
     }
 
-    override suspend fun getVideoList(): FirebaseResponse<List<Video>> {
-        return safeGetCall {
-            firestore.collection("videos").orderBy("publishedAt", Query.Direction.DESCENDING).get()
-        }
+    override fun getVideoList(): Flow<PagingData<Video>> {
+        VideoPagingSource(firestore)
+        return Pager(
+            config = PagingConfig(
+                pageSize = PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { VideoPagingSource(firestore) }
+        ).flow
     }
 
     override suspend fun deleteVideoFirestore(video: Video): FirebaseResponse<Nothing> {

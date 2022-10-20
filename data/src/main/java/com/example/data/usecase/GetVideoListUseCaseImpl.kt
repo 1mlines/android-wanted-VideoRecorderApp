@@ -1,14 +1,14 @@
 package com.example.data.usecase
 
-import com.example.domain.model.FirebaseResponse
+import androidx.paging.PagingData
 import com.example.domain.model.Video
 import com.example.domain.repository.VideoRepository
 import com.example.domain.usecase.GetVideoListUseCase
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetVideoListUseCaseImpl @Inject constructor(
     private val videoRepository: VideoRepository
 ): GetVideoListUseCase {
-    override suspend fun invoke(): FirebaseResponse<List<Video>> = videoRepository.getVideoList()
-
+    override fun invoke(): Flow<PagingData<Video>> = videoRepository.getVideoList()
 }

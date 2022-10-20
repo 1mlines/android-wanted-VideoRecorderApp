@@ -71,7 +71,7 @@ dependencies {
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewModel.ktx)
-
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
     //CameraX
     implementation(libs.bundles.cameraX)
 
@@ -79,4 +79,8 @@ dependencies {
     implementation(libs.firebase.bom)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+
+    // paging3
+    implementation(libs.paging)
+    implementation(libs.paging.runtime)
 }

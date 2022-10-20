@@ -1,7 +1,9 @@
 package com.example.domain.repository
 
+import androidx.paging.PagingData
 import com.example.domain.model.FirebaseResponse
 import com.example.domain.model.Video
+import kotlinx.coroutines.flow.Flow
 
 /**
  * @Created by 김현국 2022/10/18
@@ -13,7 +15,7 @@ interface VideoRepository {
 
     suspend fun deleteVideo(name: String)
 
-    suspend fun getVideoList(): FirebaseResponse<List<Video>>
+    fun getVideoList(): Flow<PagingData<Video>>
 
     suspend fun uploadVideo(video: Video): FirebaseResponse<Nothing>
 

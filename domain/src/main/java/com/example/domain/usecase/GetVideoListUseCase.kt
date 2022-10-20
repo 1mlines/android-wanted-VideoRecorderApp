@@ -1,8 +1,9 @@
 package com.example.domain.usecase
 
-import com.example.domain.model.FirebaseResponse
+import androidx.paging.PagingData
 import com.example.domain.model.Video
+import kotlinx.coroutines.flow.Flow
 
 interface GetVideoListUseCase {
-    suspend operator fun invoke(): FirebaseResponse<List<Video>>
+    operator fun invoke(): Flow<PagingData<Video>>
 }
