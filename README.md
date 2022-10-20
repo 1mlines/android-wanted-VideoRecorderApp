@@ -134,6 +134,8 @@ class MainAdapter(
 
 역할 : 비디오 플레이 화면 구현
 
+
+
 #### 활용 library : ExoPlayer ( Android용 어플리케이션 레벨 미디어 플레이어)
 
 - 다른 미디어 플레이어 API와의 비교
@@ -232,6 +234,17 @@ class MainAdapter(
 
 ```
 
-- 동영상 플레이어 컨트롤러
-  
+- 컨트롤러 
+  - ExoPlayer의 기본 controller 레이아웃 커스터마이징.
+
+#### 시연 스크린샷
+
+![Screenshot_20221021_054628 크게 작게](https://user-images.githubusercontent.com/95750706/197056463-d9fe4c68-576f-4f3a-a496-771c5b240002.jpeg)
+
+- 아쉬웠던 점 
+  - Media3와 ExoPlayer 를 스스로 비교해보지 못한 점.
+- 남은 일
+  - 동영상 목록 리스트에서 보여질 동영상 썸네일 생성 기능 구현
+
+
 
