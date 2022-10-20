@@ -17,12 +17,12 @@ coroutine = "1.6.1"
 runtimeKtx = "2.4.1"
 viewModelKtx = "2.4.1"
 activityKtx= "1.5.1"
-camerax = "1.1.0-beta02"
 firebaseBom = "30.5.0"
 firestore = "24.4.0"
 firebaseStorage = "20.1.0"
 paging = "3.1.1"
 googleServices = "4.3.14"
+camerax = "1.1.0-beta03"
 
 [libraries]
 
