@@ -6,19 +6,20 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.domain.model.Video
+import com.google.android.material.snackbar.Snackbar
 import com.preonboarding.videorecorder.databinding.ActivityMainBinding
 import com.preonboarding.videorecorder.ui.adapter.VideoListPagingAdapter
 import com.preonboarding.videorecorder.util.DateUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -38,11 +39,6 @@ class MainActivity : AppCompatActivity() {
         initRecyclerView()
         getRecordUrlData()
         initData()
-        mainViewModel.liveData.observe(this) {
-            if (it) {
-                adapter.refresh()
-            }
-        }
     }
 
     private fun initData() {
@@ -50,6 +46,26 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.videoList.collectLatest {
                     adapter.submitData(it)
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.videoState.collectLatest {
+                    when (it) {
+                        VideoListState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                        VideoListState.Update -> {
+                            binding.progressBar.isVisible = false
+                            adapter.refresh()
+                        }
+                        VideoListState.Failure -> {
+                            binding.progressBar.isVisible = false
+                            Snackbar.make(binding.root, "오류가 발생했습니다.", Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
         }
