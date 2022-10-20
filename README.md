@@ -128,3 +128,110 @@ class MainAdapter(
 
 - 페이징을 사용해서 리사이클러뷰 구현
 - ui가 보기 좋지 않음
+
+
+## 박인아
+
+역할 : 비디오 플레이 화면 구현
+
+#### 활용 library : ExoPlayer ( Android용 어플리케이션 레벨 미디어 플레이어)
+
+- 다른 미디어 플레이어 API와의 비교
+
+  - MediaPlayer 
+    - MediaPlayer 보다 커스터마이징이 매우 용이.
+    - 배터리 소모측면에서, 비디오 재생시 소비되는 전력이 거의 비슷함.
+  - Jetpack Media3
+    - Jetpack Media3에서의 비디오 재생은 ExoPlayer를 사용.
+    - MediaSession 다루기가 쉽지만, 현재 앱에선 동영상 재생 기능만 필요하므로 MediaSession 불필요.
+
+
+#### API 수준에 따른 동영상 player와 앱 수명 주기의 연결
+
+
+- 동영상 플레이어 객체 생성
+  - ExoPlayer 인터페이스를 다목적으로 편리하게 구현한 SimpleExoPlayer가 Deprecated 되어, ExoPlayer를 빌더 패턴을 이용하여 객체 생성.
+  
+- 동영상 플레이어 객체 생성
+  - Android API 수준 24 이상
+    - 멀티 윈도우를 지원하므로, 분활 윈도우 모드로 활성화되지 않으므로 onStart에서 초기화.
+  - Android API 수준 24 이하
+    - 리소스 포착시까지 기다려야 하므로, onResume에서초기화 
+    
+- 재생될 미디어 항목
+    - 미디어 파일의 URI 를 사용함.
+    
+```kotlin
+
+    fun initPlay(){
+        player = ExoPlayer.Builder(this).build()
+        playerView.player = player
+        binding.playControlView.player = player
+
+        player!!.also {
+            it.setMediaItem(mediaItem)
+            it.playWhenReady = playWhenReady
+            it.seekTo(currentWindow, playbackPosition)
+            it.prepare()
+        }
+
+    }
+
+    override fun onStart() {
+        if (Util.SDK_INT >= 24) {
+            initPlay()
+        }
+        super.onStart()
+    }
+
+    override fun onResume() {
+        if ((Util.SDK_INT < 24 || player == null)) {
+            initPlay()
+        }
+        super.onResume()
+    }
+    
+```
+    
+- 동영상 플레이어 객체의 해제
+  - Android API 수준 24 이상
+    -멀티 윈도우 지원으로 인해 onStop 호출이 보장되고, 만일 동영상이 일시정지 상태에서도 활동은 여전히 표시되므로, onStop에서 해제
+  - Android API 수준 24 이하
+    - onStop의 호출이 보장되지 않음. 그러므로 onPause 에서 플레이어 해제
+- 동영상 플레이어 객체 해체시 권장사항
+  - 앱이 활동 수명 주기의 다양한 상태에서의 기존 재생 정보 유지
+    ex) 앱의 회전, 포그라운드 상태 -> 백그라운드 상태 -> 포그라운드 상태 , 다른 앱 시작 후 앱 실행 등의 경우의 재생 위치 
+
+    
+ ```kotlin
+
+    private fun releasePlayer() {
+        player?.run {
+            playbackPosition = this.currentPosition
+            currentWindow = this.currentMediaItemIndex
+            playWhenReady = this.playWhenReady
+            release()
+        }
+        player = null
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        if (Util.SDK_INT < 24) {
+            releasePlayer()
+        }
+    }
+
+     override fun onStop() {
+        super.onStop()
+        if (Util.SDK_INT >= 24) {
+            releasePlayer()
+        }
+    }
+
+```
+
+- 동영상 플레이어 컨트롤러
+  
+
