@@ -71,4 +71,7 @@ dependencies {
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewModel.ktx)
+
+    //CameraX
+    implementation(libs.bundles.cameraX)
 }
