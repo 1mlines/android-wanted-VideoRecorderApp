@@ -1,4 +1,4 @@
-package com.preonboarding.videorecorder.ui.test
+package com.preonboarding.videorecorder.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

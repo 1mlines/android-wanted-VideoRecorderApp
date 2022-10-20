@@ -22,7 +22,7 @@
         </activity>
 
         <activity
-            android:name=".ui.test.CameraActivity"
+            android:name=".ui.CameraActivity"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
