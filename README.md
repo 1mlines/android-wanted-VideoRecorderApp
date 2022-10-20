@@ -64,6 +64,84 @@
 ## ⌨️ Coding
 - [android-style-guide](https://github.com/PRNDcompany/android-style-guide)의 코딩 컨벤션과 동일하게 진행합니다.
 
+## 박규림
+- 담당한 일
+  - Base Architecture 설계
+  - 영상 long click 시 처음 5초간 플레이
+- 더 해야할 점
+  - 현재 영상 끝까지 재생되도록 구현되었는데, 5초간 재생으로 변경하기
+  - 썸네일 적용 
+
+### Base Architecture
+- Clean Architecture 적용
+<img width="700" alt="스크린샷 2022-10-06 오후 10 59 44" src="https://user-images.githubusercontent.com/31344894/194359965-720b5e68-81ef-4479-95ad-321c3e445e2c.png">
+
+- UseCase
+<img width="811" alt="스크린샷 2022-10-21 오전 3 44 31" src="https://user-images.githubusercontent.com/31344894/197031940-ad8484b8-85bb-45d6-b476-354f4dbbdfce.png">
+
+- Video Model 
+```kotlin
+data class Video(
+    val id: Int,
+    val uri: String,
+    val date: String
+) {
+    companion object {
+        val EMPTY = Video(
+            id = 0,
+            uri = "",
+            date = ""
+        )
+    }
+}
+```
+
+### 영상 Long Click 시 처음 5초간 플레이
+- 시연 영상  
+
+https://user-images.githubusercontent.com/31344894/197033577-5c258bf7-0155-457b-a75d-8a05db13679f.mp4
+
+- ExoPlayer 주요 컴포넌트 소개 
+  - PlayerView: 비디오를 불러와 실제 UI에 뿌려줄 때 사용되는 UI 요소
+  - ExoPlayer: 미디어 플레이어 기능 제공 
+  - MediaSource: ExoPlayer에서 재생될 미디어를 정의하고 제공하는 역할
+    - ProgressiveMediaSource: 일반 미디어 파일 형식
+  - DataSource: 영상 스트림을 읽을 수 있는 형태로 표현
+
+- Long Click Listener 적용 
+```kotlin
+binding.itemNewsPlayerView.setOnClickListener {
+    itemClick(video)
+}
+
+binding.itemNewsPlayerView.setOnLongClickListener {
+    mediaSource = ProgressiveMediaSource.Factory(factory)
+        .createMediaSource(MediaItem.fromUri(Uri.parse(video.uri)))
+
+    exoPlayer.apply {
+        setMediaSource(mediaSource)
+        prepare()
+        play()
+    }
+
+    binding.itemNewsPlayerView.apply {
+        player = exoPlayer
+        useController = false // 자동재생이므로 controlview는 사용되지 않도록 적용 
+    }
+    true 
+}
+```
+- background로 이동 시, player 재시작 준비
+```kotlin
+override fun onPause() {
+    super.onPause()
+    mainAdapter.exoPlayer.apply {
+        seekTo(0)
+        playWhenReady = false
+    }
+}
+```
+
 ## 이현섭
 
 화면전환
