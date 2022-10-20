@@ -83,6 +83,97 @@ ___
 
 ## 서강휘
 ### 맡은 역할
+- 비디오 플레이 화면 구현
+- 5초간 영상 재생 
+
+### CustomExoPlayerRecyclerView
+https://user-images.githubusercontent.com/45396949/197003564-c1544155-0e61-42a5-8893-52cbf66d2e71.mp4
+
+- scroll에 따라 exoPlayer가 동작하도록 만들기 위해서 Custom View를 구현했습니다. 
+
+### 앱 백그라운드 진입 시, 리소스 할당 해제
+
+```kotlin
+   //CustomExoPlayerRecyclerView
+   
+    fun releasePlayer() {
+        removePlayerView()
+
+        player?.run {
+            removeListener(exoPlayerListener)
+            release()
+        }
+
+        player = null
+    }
+
+```
+
+```kotlin
+   //Activity
+   
+    override fun onStop() {
+        super.onStop()
+        binding.videoRecyclerView.releasePlayer()
+    }
+
+```
+
+- CustomExoPlayerRecyclerView로부터 구현한 release 메소드를 액티비티 라이프싸이클에 따라 동작하도록 만들었습니다. 
+
+### 포백그라운드 진입 시, 리소스 할당
+
+```kotlin
+   //CustomExoPlayerRecyclerView
+   
+    private fun initializePlayer(video: Video) {
+        if (player == null) {
+            player = ExoPlayer.Builder(context)
+                .build()
+                .also { exoPlayer ->
+                    exoPlayerView?.player = exoPlayer
+
+                    exoPlayer.setMediaItem(MediaItem.fromUri(video.uri))
+
+                    exoPlayerListener = playerStateListener()
+                    exoPlayer.addListener(exoPlayerListener)
+
+                    exoPlayer.playWhenReady = true
+                    exoPlayer.seekTo(0)
+                    exoPlayer.prepare()
+                }
+
+        } else {
+            player?.also { exoPlayer ->
+                exoPlayerView?.player = exoPlayer
+
+                exoPlayer.setMediaItem(MediaItem.fromUri(video.uri))
+
+                exoPlayer.playWhenReady = true
+                exoPlayer.seekTo(0)
+                exoPlayer.prepare()
+            }
+        }
+    }
+
+```
+
+```kotlin
+   //Activity
+   
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch{
+            delay(3000)
+            binding.videoRecyclerView.playCurrentPosition(false)
+        }
+    }
+
+```
+
+- CustomExoPlayerRecyclerView로부터 구현한 initialize 메소드를 액티비티 라이프싸이클에 따라 동작하도록 만들었습니다. 
+
 
 ___
 
