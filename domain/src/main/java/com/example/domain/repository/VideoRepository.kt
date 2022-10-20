@@ -11,10 +11,6 @@ import kotlinx.coroutines.flow.Flow
  */
 interface VideoRepository {
 
-    suspend fun insertVideo(video: Video)
-
-    suspend fun deleteVideo(name: String)
-
     fun getVideoList(): Flow<PagingData<Video>>
 
     suspend fun uploadVideo(video: Video): FirebaseResponse<Nothing>
@@ -22,4 +18,5 @@ interface VideoRepository {
     suspend fun deleteVideoFirestore(video: Video): FirebaseResponse<Nothing>
 
     suspend fun deleteVideoStorage(video: Video): FirebaseResponse<Nothing>
+
 }

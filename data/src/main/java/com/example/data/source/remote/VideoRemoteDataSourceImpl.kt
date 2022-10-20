@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.example.data.constant.COLLECTION_NAME
 import com.example.data.constant.PAGE_SIZE
 import com.example.data.util.safeSetCall
 import com.example.domain.model.FirebaseResponse
@@ -11,6 +12,7 @@ import com.example.domain.model.Video
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 import javax.inject.Inject
 
 class VideoRemoteDataSourceImpl @Inject constructor(
@@ -26,7 +28,7 @@ class VideoRemoteDataSourceImpl @Inject constructor(
     override suspend fun uploadVideoFirestore(video: Video): FirebaseResponse<Nothing> {
         return safeSetCall {
             firebaseStorage.reference.child(video.name).downloadUrl.addOnSuccessListener {
-                firestore.collection("videos").add(video.copy(uri = it.toString()))
+                firestore.collection(COLLECTION_NAME).document(video.name).set(video.copy(uri = it.toString()))
             }
         }
     }
@@ -43,11 +45,16 @@ class VideoRemoteDataSourceImpl @Inject constructor(
     }
 
     override suspend fun deleteVideoFirestore(video: Video): FirebaseResponse<Nothing> {
-        TODO("Not yet implemented")
+        return safeSetCall {
+            firestore.collection(COLLECTION_NAME).document(video.name)
+                .delete()
+        }
     }
 
     override suspend fun deleteVideoStorage(video: Video): FirebaseResponse<Nothing> {
-        TODO("Not yet implemented")
+        return safeSetCall {
+            firebaseStorage.reference.child(video.name).delete()
+        }
     }
 
 }

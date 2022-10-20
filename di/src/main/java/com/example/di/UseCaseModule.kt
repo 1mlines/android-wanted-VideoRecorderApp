@@ -1,12 +1,12 @@
 package com.example.di
 
-import com.example.data.usecase.DeleteVideoDataUseCaseImpl
+import com.example.data.usecase.DeleteVideoFirestoreUseCaseImpl
+import com.example.data.usecase.DeleteVideoStorageUseCaseImpl
 import com.example.data.usecase.GetVideoListUseCaseImpl
-import com.example.data.usecase.InsertVideoDataUseCaseImpl
 import com.example.data.usecase.UploadVideoUseCaseImpl
-import com.example.domain.usecase.DeleteVideoDataUseCase
+import com.example.domain.usecase.DeleteVideoFirestoreUseCase
+import com.example.domain.usecase.DeleteVideoStorageUseCase
 import com.example.domain.usecase.GetVideoListUseCase
-import com.example.domain.usecase.InsertVideoDataUseCase
 import com.example.domain.usecase.UploadVideoUseCase
 import dagger.Binds
 import dagger.Module
@@ -25,11 +25,11 @@ abstract class UseCaseModule {
 
     @Binds
     @ViewModelScoped
-    abstract fun bindInsertVideoUseCase(insertVideoDataUseCaseImpl: InsertVideoDataUseCaseImpl): InsertVideoDataUseCase
+    abstract fun bindDeleteVideoStorageUseCase(deleteVideoStorageUseCaseImpl: DeleteVideoStorageUseCaseImpl): DeleteVideoStorageUseCase
 
     @Binds
     @ViewModelScoped
-    abstract fun bindDeleteVideoUseCase(deleteVideoDataUseCaseImpl: DeleteVideoDataUseCaseImpl): DeleteVideoDataUseCase
+    abstract fun bindDeleteVideoFirestoreUseCase(deleteVideoFirestoreUseCaseImpl: DeleteVideoFirestoreUseCaseImpl): DeleteVideoFirestoreUseCase
 
     @Binds
     @ViewModelScoped

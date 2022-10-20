@@ -8,14 +8,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.domain.model.Video
 import com.preonboarding.videorecorder.databinding.RvVideoBinding
 
-//todo PagingAdapter
 class VideoListPagingAdapter : PagingDataAdapter<Video, VideoListPagingAdapter.VideoViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder =
         VideoViewHolder(RvVideoBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it)  }
+        getItem(position)?.let { holder.bind(it) }
     }
 
     companion object {
