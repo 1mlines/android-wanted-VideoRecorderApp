@@ -76,6 +76,132 @@ ___
 
 ## 김영진
 ### 맡은 역할
+- 영상 업로드 (Firebase Storage, Firebase Firestore)
+- 영상 삭제 (Firebase Storage, Firebase Firestore)
+- 영상 리스트 가져오기 (Firebase Firestore, Paging3)
+
+### 영상 업로드
+- 결과값을 FirebaseResponse로 매핑 (data-domain)
+- FirebaseResponse를 UiState로 매핑 (presentation)
+- UiState에 따라 리스트 업데이트 or 프로그레스바 노출 or 에러 메시지 노출
+
+```kotlin
+//Video
+
+data class Video(
+    val name: String = "",
+    val publishedAt: Long = 0L,
+    val uri: String = ""
+) 
+
+```
+
+```kotlin
+//FirebaseResponse
+
+data class FirebaseResponse<T>(
+    val state : FirebaseState,
+    val result : T? = null
+)
+
+enum class FirebaseState{
+    SUCCESS,
+    FAILURE,
+}
+
+```
+
+```kotlin
+//safeFirebaseCall
+
+suspend fun <T> safeSetCall(callFunction: () -> Task<T>): FirebaseResponse<Nothing> {
+    return try {
+        callFunction.invoke().await()
+        FirebaseResponse(FirebaseState.SUCCESS)
+    } catch (e: Exception) {
+        Timber.e("safeSetCall: 실패 $e")
+        FirebaseResponse(FirebaseState.FAILURE)
+    }
+}
+
+```
+
+```kotlin
+//VideoDataSourceImpl
+
+    override suspend fun uploadVideoStorage(video: Video): FirebaseResponse<Nothing> {
+        return safeSetCall {
+            firebaseStorage.reference.child(video.name).putFile(Uri.parse(video.uri))
+        }
+    }
+
+```
+
+```kotlin
+//VideoListState
+
+sealed class VideoListState {
+
+    object Failure : VideoListState()
+
+    object Loading : VideoListState()
+
+    object Update : VideoListState()
+}
+
+```
+
+
+
+```kotlin
+//MainViewModel
+
+fun uploadVideoList(video: Video) {
+        viewModelScope.launch {
+            _videoState.emit(VideoListState.Loading)
+            when (uploadVideoUseCase(video).state) {
+                FirebaseState.SUCCESS -> {
+                    _videoState.emit(VideoListState.Update)
+                }
+                FirebaseState.FAILURE -> {
+                    _videoState.emit(VideoListState.Failure)
+                }
+            }
+        }
+    }
+
+```
+
+
+
+```kotlin
+//MainActivity
+
+lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.videoState.collectLatest {
+                    when (it) {
+                        VideoListState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                        VideoListState.Update -> {
+                            binding.progressBar.isVisible = false
+                            adapter.refresh()
+                        }
+                        VideoListState.Failure -> {
+                            binding.progressBar.isVisible = false
+                            Snackbar.make(binding.root, "오류가 발생했습니다.", Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+
+```
+
+
+https://user-images.githubusercontent.com/66052467/197009920-0bedb55f-5225-4880-80f1-664e014876ef.mov
+
 
 
 ___
@@ -83,6 +209,97 @@ ___
 
 ## 서강휘
 ### 맡은 역할
+- 비디오 플레이 화면 구현
+- 5초간 영상 재생 
+
+### CustomExoPlayerRecyclerView
+https://user-images.githubusercontent.com/45396949/197003564-c1544155-0e61-42a5-8893-52cbf66d2e71.mp4
+
+- scroll에 따라 exoPlayer가 동작하도록 만들기 위해서 Custom View를 구현했습니다. 
+
+### 앱 백그라운드 진입 시, 리소스 할당 해제
+
+```kotlin
+   //CustomExoPlayerRecyclerView
+   
+    fun releasePlayer() {
+        removePlayerView()
+
+        player?.run {
+            removeListener(exoPlayerListener)
+            release()
+        }
+
+        player = null
+    }
+
+```
+
+```kotlin
+   //Activity
+   
+    override fun onStop() {
+        super.onStop()
+        binding.videoRecyclerView.releasePlayer()
+    }
+
+```
+
+- CustomExoPlayerRecyclerView로부터 구현한 release 메소드를 액티비티 라이프싸이클에 따라 동작하도록 만들었습니다. 
+
+### 포백그라운드 진입 시, 리소스 할당
+
+```kotlin
+   //CustomExoPlayerRecyclerView
+   
+    private fun initializePlayer(video: Video) {
+        if (player == null) {
+            player = ExoPlayer.Builder(context)
+                .build()
+                .also { exoPlayer ->
+                    exoPlayerView?.player = exoPlayer
+
+                    exoPlayer.setMediaItem(MediaItem.fromUri(video.uri))
+
+                    exoPlayerListener = playerStateListener()
+                    exoPlayer.addListener(exoPlayerListener)
+
+                    exoPlayer.playWhenReady = true
+                    exoPlayer.seekTo(0)
+                    exoPlayer.prepare()
+                }
+
+        } else {
+            player?.also { exoPlayer ->
+                exoPlayerView?.player = exoPlayer
+
+                exoPlayer.setMediaItem(MediaItem.fromUri(video.uri))
+
+                exoPlayer.playWhenReady = true
+                exoPlayer.seekTo(0)
+                exoPlayer.prepare()
+            }
+        }
+    }
+
+```
+
+```kotlin
+   //Activity
+   
+    override fun onResume() {
+        super.onResume()
+
+        lifecycleScope.launch{
+            delay(3000)
+            binding.videoRecyclerView.playCurrentPosition(false)
+        }
+    }
+
+```
+
+- CustomExoPlayerRecyclerView로부터 구현한 initialize 메소드를 액티비티 라이프싸이클에 따라 동작하도록 만들었습니다. 
+
 
 ___
 
