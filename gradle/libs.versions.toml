@@ -16,6 +16,8 @@ room = "2.4.3"
 coroutine = "1.6.1"
 runtimeKtx = "2.4.1"
 viewModelKtx = "2.4.1"
+activityKtx= "1.5.1"
+camerax = "1.1.0-beta02"
 activityKtx = "1.5.1"
 firebaseBom = "30.5.0"
 firestore = "24.4.0"
@@ -57,8 +59,18 @@ firebase-storage = { group = "com.google.firebase", name = "firebase-storage-ktx
 
 paging = { group = "androidx.paging", name = "paging-common", version.ref = "paging" }
 
+camera-core = {group = "androidx.camera", name = "camera-core", version.ref = "camerax"}
+camera-camera2 = {group = "androidx.camera", name = "camera-camera2", version.ref = "camerax"}
+camera-lifecycle = {group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax"}
+camera-video = {group = "androidx.camera", name = "camera-video", version.ref = "camerax"}
+camera-view = {group = "androidx.camera", name = "camera-view", version.ref = "camerax"}
+camera-extensions = {group = "androidx.camera", name = "camera-extensions", version.ref = "camerax"}
+
+
 [bundles]
 room = ["room-runtime", "room-ktx"]
+room = ["room-runtime","room-ktx"]
+cameraX = ["camera-core", "camera-camera2", "camera-lifecycle", "camera-video", "camera-view", "camera-extensions"]
 
 
 

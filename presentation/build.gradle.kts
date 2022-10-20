@@ -72,6 +72,9 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewModel.ktx)
 
+    //CameraX
+    implementation(libs.bundles.cameraX)
+
     //firebase
     implementation(libs.firebase.bom)
     implementation(libs.firebase.firestore)

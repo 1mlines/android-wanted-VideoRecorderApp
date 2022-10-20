@@ -1,5 +1,6 @@
 package com.preonboarding.videorecorder.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,5 +20,14 @@ class MainActivity : AppCompatActivity() {
         binding.vm = mainViewModel
         binding.lifecycleOwner = this
         mainViewModel.getMyVideoList()
+
+        goToCamera()
+    }
+
+    private fun goToCamera() {
+        binding.recordButton.setOnClickListener {
+            val intent = Intent(this, CameraActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
