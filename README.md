@@ -64,6 +64,9 @@
 ## ⌨️ Coding
 - [android-style-guide](https://github.com/PRNDcompany/android-style-guide)의 코딩 컨벤션과 동일하게 진행합니다.
 
+## ⚙️ Tech Stack
+`Clean Architecture`, `MVVM`, `Kotlin`, `Hilt`, `Coroutine`, `Flow`, `Firebase Realtime DB`, `Firebase Storage`, `Lifecycle`, `Databinding`, `Livedata`, `ExoPlayer`, `CameraX`, `Timber`
+
 ## 박규림
 - 담당한 일
   - Base Architecture 설계
@@ -206,6 +209,126 @@ class MainAdapter(
 - 페이징을 사용해서 리사이클러뷰 구현
 - ui가 보기 좋지 않음
 
+## 김정호
+
+![스크린샷 2022-10-21 오전 8 46 19 중간](https://user-images.githubusercontent.com/85336456/197079846-661e6c17-cc34-4ca0-a88c-8b6864ee71db.jpeg)
+
+- `CameraX` 라이브러리를 통해 전-후면 동영상 촬영 기능 구현
+- 애플리케이션 실행에 필요한 권한 요청 코드 구현
+- 녹화 영상 갤러리 저장 및 `Firebase Storage` 에 저장
+- `Firebase Realtime Database` 의 `CRUD` 구현
+
+```kotlin
+
+  private fun captureVideo() {
+      val videoCapture = this.videoCapture ?: return
+
+      binding.videoCaptureButton.isEnabled = false
+
+      // 진행 중인 녹음이 있으면 중지, 현재 녹음을 해제한다.
+      // 캡처한 비디오 파일이 애플리케이션에서 사용할 준비가 됐을 때 알림을 받게 된다.
+      val curRecording = recording
+      if (curRecording != null) {
+          curRecording.stop()
+          recording = null
+          return
+      }
+
+      val name = SimpleDateFormat(FILENAME_FORMAT, Locale.KOREA)
+          .format(System.currentTimeMillis())
+      val contentValues = ContentValues().apply {
+          put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+          put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
+          if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+              put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/CameraX-Video")
+          }
+      }
+
+      val mediaStoreOutputOptions = MediaStoreOutputOptions
+          .Builder(contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+          .setContentValues(contentValues)
+          .build()
+
+      // videoCapture 의 레코더에 대한 출력 옵션을 구성하고 오디오 녹음 활성화
+      recording = videoCapture.output
+          .prepareRecording(this, mediaStoreOutputOptions)
+          .apply {
+              if (PermissionChecker.checkSelfPermission(
+                      this@RecordActivity,
+                      Manifest.permission.RECORD_AUDIO
+                  ) ==
+                  PermissionChecker.PERMISSION_GRANTED
+              ) {
+                  withAudioEnabled()
+              }
+          }
+          .start(ContextCompat.getMainExecutor(this)) { recordEvent ->
+              when (recordEvent) {
+                  is VideoRecordEvent.Start -> {
+                      binding.videoCaptureButton.apply {
+                          text = "stop capture"
+                          isEnabled = true
+                      }
+                  }
+                  is VideoRecordEvent.Finalize -> {
+                      if (!recordEvent.hasError()) {
+                          val msg = "Video capture succeeded: ${recordEvent.outputResults.outputUri}"
+                          Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                      } else {
+                          recording?.close()
+                          recording = null
+                      }
+                      binding.videoCaptureButton.apply {
+                          text = "start capture"
+                          isEnabled = true
+                      }
+                  }
+              }
+          }
+  }
+
+  private fun startCamera() {
+      // 카메라 생명 주기를 현재 라이프사이클 오너에게 연결하는데 사용된다.
+      // CameraX 는 생명 주기를 인식하므로 카메라를 열고 닫는 작업이 필요하지 않다.
+      cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+
+      cameraProviderFuture.addListener({
+
+          // 애플리케이션 프로세스 내에서 카메라의 생명주기를 라이프사이클 오너에 바인딩하는데 사용된다.
+          val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+
+          // Preview 클래스 생성
+          val preview: Preview = Preview.Builder()
+              .build()
+              .also {
+                  // 유즈케이스(Preview)와 previewView 를 연결
+                  it.setSurfaceProvider(binding.previewView.surfaceProvider)
+              }
+
+          // Recorder 클래스 생성
+          val recorder = Recorder.Builder()
+              .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
+              .build()
+          videoCapture = VideoCapture.withOutput(recorder)
+
+          val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
+          try {
+              cameraProvider.unbindAll() // 이전에 바인딩된 유즈케이스 해제
+              cameraProvider
+                  .bindToLifecycle(
+                      this as LifecycleOwner,
+                      cameraSelector,
+                      preview,
+                      videoCapture
+                  ) // 라이프 사이클 연결
+          } catch (e: Exception) {
+              Toast.makeText(this, "Use case binding failed $e", Toast.LENGTH_SHORT).show()
+          }
+      }, ContextCompat.getMainExecutor(this))
+  }
+```
+
 
 ## 박인아
 
@@ -322,6 +445,4 @@ class MainAdapter(
   - Media3와 ExoPlayer 를 스스로 비교해보지 못한 점.
 - 남은 일
   - 동영상 목록 리스트에서 보여질 동영상 썸네일 생성 기능 구현
-
-
 
