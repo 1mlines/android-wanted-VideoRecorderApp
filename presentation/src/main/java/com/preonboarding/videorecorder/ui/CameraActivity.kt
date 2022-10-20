@@ -96,6 +96,10 @@ class CameraActivity : AppCompatActivity() {
             .setContentValues(contentValues)
             .build()
 
+        // uri 생성
+        val currentUri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues)
+        Log.e(TAG, "captureVideo: $currentUri")
+
         recording = videoCapture.output
             .prepareRecording(this, mediaStoreOutputOptions)
             .apply {
