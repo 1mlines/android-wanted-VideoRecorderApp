@@ -2,7 +2,6 @@ package com.preonboarding.videorecorder.presentation.ui.main
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import com.preonboarding.videorecorder.R
 import com.preonboarding.videorecorder.databinding.ActivityMainBinding
@@ -16,7 +15,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     override val layoutResourceId: Int = R.layout.activity_main
     private val viewModel: MainViewModel by viewModels()
-
+    lateinit var mainAdapter : MainAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +23,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         setUpDataBinding()
 
         initView()
-
     }
 
     private fun initView() {
@@ -32,11 +30,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             btRecord.setOnClickListener {
                 startActivity(Intent(this@MainActivity, RecordActivity::class.java))
             }
-            val mainAdapter = MainAdapter(itemClick = {
+            mainAdapter = MainAdapter(itemClick = {
                 itemClick(it)
             }, deleteClick = {
                 deleteClick(it)
-            })
+            }
+            )
             rvRecordList.adapter = mainAdapter
             viewModel!!.videoList.observe(this@MainActivity) {
                 mainAdapter.submitList(it)
@@ -46,7 +45,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun setUpDataBinding() {
         viewModel.videoList.observe(this) {
-            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+//            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -58,5 +57,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     private fun deleteClick(video: Video) {
         viewModel.deleteVideo(video)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mainAdapter.exoPlayer.pause()
     }
 }
