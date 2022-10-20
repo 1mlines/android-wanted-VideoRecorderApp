@@ -305,7 +305,82 @@ ___
 
 ## 권혁준
 ### 맡은 역할
+- 비디오 녹화 화면 구현 
 
+
+[change.webm](https://user-images.githubusercontent.com/70066242/197023267-70f10ffb-92ce-4e9b-951f-4f8dcd5eb1d8.webm)
+
+
+### 전면 / 후면  화면 전환
+```kotlin
+private fun changeFacing() {
+        binding.changeLensButton.setOnClickListener {
+            defaultCameraFacing = if (defaultCameraFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
+                CameraSelector.DEFAULT_BACK_CAMERA
+            } else {
+                CameraSelector.DEFAULT_FRONT_CAMERA
+            }
+            try {
+                startCamera(defaultCameraFacing)
+            } catch (exc: Exception) {
+                // Do nothing
+            }
+        }
+    }
+```
+
+### 녹화 화면 
+```kotlin
+    private fun startCamera(defaultCameraFacing: CameraSelector) {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        cameraProviderFuture.addListener({
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
+                }
+
+            val recorder = Recorder.Builder()
+                // 화질 설정 (비디오)
+                .setQualitySelector(QualitySelector.from(Quality.HD))
+                .build()
+            videoCapture = VideoCapture.withOutput(recorder)
+
+            val cameraSelector = defaultCameraFacing
+
+            try {
+                cameraProvider.unbindAll()
+                // video 추가
+                cameraProvider.bindToLifecycle(
+                    this, cameraSelector, preview, videoCapture
+                )
+            } catch (exc: Exception) {
+                Log.e(TAG, "startCamera fail: ", exc )
+            }
+        }, ContextCompat.getMainExecutor(this)
+        )
+    }
+```
+
+### Uri 생성 
+```kotlin
+val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                put(MediaStore.Video.Media.RELATIVE_PATH,
+                    "Movies/CameraX-Video")
+            }
+        }
+        
+// uri 생성
+val currentUri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues)
+```
+
+<img width="806" alt="스크린샷 2022-10-21 오전 2 54 20" src="https://user-images.githubusercontent.com/70066242/197022671-6cae4adb-7afb-45a7-8f82-15817123b27e.png">
+https://kimdabang.tistory.com/entry/%EC%95%88%EB%93%9C%EB%A1%9C%EC%9D%B4%EB%93%9C-%EC%A0%80%EC%9E%A5%EC%86%8C-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0-2-Scoped-Storage 참조
 
 
 ## Convention
