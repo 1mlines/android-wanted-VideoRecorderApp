@@ -76,6 +76,121 @@ ___
 
 ## 김영진
 ### 맡은 역할
+- 영상 업로드 (Firebase Storage, Firebase Firestore)
+- 영상 삭제 (Firebase Storage, Firebase Firestore)
+- 영상 리스트 가져오기 (Firebase Firestore, Paging3)
+
+### 영상 업로드
+- 결과값을 FirebaseResponse로 매핑 (data-domain)
+- FirebaseResponse를 UiState로 매핑 (presentation)
+- UiState에 따라 리스트 업데이트 or 프로그레스바 노출 or 에러 메시지 노출
+
+```kotlin
+//FirebaseResponse
+
+data class FirebaseResponse<T>(
+    val state : FirebaseState,
+    val result : T? = null
+)
+
+enum class FirebaseState{
+    SUCCESS,
+    FAILURE,
+}
+
+```
+
+```kotlin
+//safeFirebaseCall
+
+suspend fun <T> safeSetCall(callFunction: () -> Task<T>): FirebaseResponse<Nothing> {
+    return try {
+        callFunction.invoke().await()
+        FirebaseResponse(FirebaseState.SUCCESS)
+    } catch (e: Exception) {
+        Timber.e("safeSetCall: 실패 $e")
+        FirebaseResponse(FirebaseState.FAILURE)
+    }
+}
+
+```
+
+```kotlin
+//VideoDataSourceImpl
+
+    override suspend fun uploadVideoStorage(video: Video): FirebaseResponse<Nothing> {
+        return safeSetCall {
+            firebaseStorage.reference.child(video.name).putFile(Uri.parse(video.uri))
+        }
+    }
+
+```
+
+```kotlin
+//VideoListState
+
+sealed class VideoListState {
+
+    object Failure : VideoListState()
+
+    object Loading : VideoListState()
+
+    object Update : VideoListState()
+}
+
+```
+
+
+
+```kotlin
+//MainViewModel
+
+fun uploadVideoList(video: Video) {
+        viewModelScope.launch {
+            _videoState.emit(VideoListState.Loading)
+            when (uploadVideoUseCase(video).state) {
+                FirebaseState.SUCCESS -> {
+                    _videoState.emit(VideoListState.Update)
+                }
+                FirebaseState.FAILURE -> {
+                    _videoState.emit(VideoListState.Failure)
+                }
+            }
+        }
+    }
+
+```
+
+
+
+```kotlin
+//MainActivity
+
+lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.videoState.collectLatest {
+                    when (it) {
+                        VideoListState.Loading -> {
+                            binding.progressBar.isVisible = true
+                        }
+                        VideoListState.Update -> {
+                            binding.progressBar.isVisible = false
+                            adapter.refresh()
+                        }
+                        VideoListState.Failure -> {
+                            binding.progressBar.isVisible = false
+                            Snackbar.make(binding.root, "오류가 발생했습니다.", Snackbar.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
+
+```
+
+
+https://user-images.githubusercontent.com/66052467/197009920-0bedb55f-5225-4880-80f1-664e014876ef.mov
+
 
 
 ___
