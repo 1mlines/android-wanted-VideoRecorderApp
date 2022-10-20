@@ -70,7 +70,6 @@
   - 영상 long click 시 처음 5초간 플레이
 - 더 해야할 점
   - 현재 영상 끝까지 재생되도록 구현되었는데, 5초간 재생으로 변경하기
-  - 썸네일 적용 
 
 ### Base Architecture
 - Clean Architecture 적용
