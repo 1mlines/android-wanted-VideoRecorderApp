@@ -1,13 +1,17 @@
 package com.preonboarding.videorecorder.ui
 
 import android.Manifest
+import android.app.Activity
 import android.content.ContentValues
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
@@ -125,6 +129,7 @@ class CameraActivity : AppCompatActivity() {
                             Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
                                 .show()
                             Log.d(TAG, msg)
+
                         } else {
                             recording?.close()
                             recording = null
@@ -135,6 +140,15 @@ class CameraActivity : AppCompatActivity() {
                             text = getString(R.string.start_capture)
                             isEnabled = true
                         }
+
+                        // url 값 넘겨주기
+                        val intent = Intent(this, MainActivity::class.java).apply {
+                            putExtra("url", "$currentUri")
+                            Log.e("카메라 테스트", "captureVideo: $currentUri", )
+                        }
+                        setResult(RESULT_OK, intent)
+                        if (!isFinishing) finish()
+
                     }
                 }
             }
@@ -153,7 +167,7 @@ class CameraActivity : AppCompatActivity() {
 
             val recorder = Recorder.Builder()
                 // 화질 설정 (비디오)
-                .setQualitySelector(QualitySelector.from(Quality.HD))
+                .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
                 .build()
             videoCapture = VideoCapture.withOutput(recorder)
 
