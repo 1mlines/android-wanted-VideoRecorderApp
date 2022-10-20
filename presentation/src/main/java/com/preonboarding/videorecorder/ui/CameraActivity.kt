@@ -10,7 +10,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.*
@@ -22,6 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import com.preonboarding.videorecorder.R
 
 class CameraActivity : AppCompatActivity() {
 
@@ -61,49 +61,11 @@ class CameraActivity : AppCompatActivity() {
                 CameraSelector.DEFAULT_FRONT_CAMERA
             }
             try {
-                // Only bind use cases if we can query a camera with this orientation
                 startCamera(defaultCameraFacing)
             } catch (exc: Exception) {
                 // Do nothing
             }
         }
-    }
-
-    private fun takePhoto() {
-        //val imageCapture = imageCapture ?: return
-
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis())
-
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
-            }
-        }
-
-        val outputOptions = ImageCapture.OutputFileOptions
-            .Builder(contentResolver,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues)
-            .build()
-
-        /*imageCapture.takePicture(
-            outputOptions,
-            ContextCompat.getMainExecutor(this),
-            object : ImageCapture.OnImageSavedCallback {
-                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    val msg = "Photo capture succeeded: ${outputFileResults.savedUri}"
-                    Toast.makeText(baseContext, msg, Toast.LENGTH_LONG).show()
-                    Log.d(TAG, msg)
-                }
-
-                override fun onError(exception: ImageCaptureException) {
-                    Log.e(TAG, "Photo capture failed: ${exception.message}", exception)
-                }
-            }
-        )*/
     }
 
     private fun captureVideo() {
@@ -148,7 +110,7 @@ class CameraActivity : AppCompatActivity() {
                 when(recordEvent) {
                     is VideoRecordEvent.Start -> {
                         binding.videoCaptureButton.apply {
-                            //text = getString(R.string.stop_capture)
+                            text = getString(R.string.stop_capture)
                             isEnabled = true
                         }
                     }
@@ -166,7 +128,7 @@ class CameraActivity : AppCompatActivity() {
                                     "${recordEvent.error}")
                         }
                         binding.videoCaptureButton.apply {
-                            //text = getString(R.string.start_capture)
+                            text = getString(R.string.start_capture)
                             isEnabled = true
                         }
                     }
@@ -184,7 +146,6 @@ class CameraActivity : AppCompatActivity() {
                 .also {
                     it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
-            //imageCapture = ImageCapture.Builder().build()
 
             val recorder = Recorder.Builder()
                 // 화질 설정 (비디오)
@@ -196,9 +157,6 @@ class CameraActivity : AppCompatActivity() {
 
             try {
                 cameraProvider.unbindAll()
-                /*cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture
-                )*/
                 // video 추가
                 cameraProvider.bindToLifecycle(
                     this, cameraSelector, preview, videoCapture
