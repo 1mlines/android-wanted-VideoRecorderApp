@@ -86,6 +86,17 @@ ___
 - UiState에 따라 리스트 업데이트 or 프로그레스바 노출 or 에러 메시지 노출
 
 ```kotlin
+//Video
+
+data class Video(
+    val name: String = "",
+    val publishedAt: Long = 0L,
+    val uri: String = ""
+) 
+
+```
+
+```kotlin
 //FirebaseResponse
 
 data class FirebaseResponse<T>(
