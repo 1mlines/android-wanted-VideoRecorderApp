@@ -1,15 +1,16 @@
 package com.example.data.source.remote
 
-import android.net.Uri
 import com.example.domain.model.FirebaseResponse
 import com.example.domain.model.Video
 
 interface VideoRemoteDataSource {
-    suspend fun uploadVideoStorage(uri: Uri)
+    suspend fun uploadVideoStorage(video: Video): FirebaseResponse<Nothing>
 
-    suspend fun uploadVideoFirestore(fileName: String, publishedAt: Long)
+    suspend fun uploadVideoFirestore(video: Video): FirebaseResponse<Nothing>
 
     suspend fun getVideoList(): FirebaseResponse<List<Video>>
 
-    fun deleteVideo()
+    suspend fun deleteVideoFirestore(video: Video): FirebaseResponse<Nothing>
+
+    suspend fun deleteVideoStorage(video: Video): FirebaseResponse<Nothing>
 }

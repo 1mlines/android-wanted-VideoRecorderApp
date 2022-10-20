@@ -3,9 +3,11 @@ package com.example.di
 import com.example.data.usecase.DeleteVideoDataUseCaseImpl
 import com.example.data.usecase.GetVideoListUseCaseImpl
 import com.example.data.usecase.InsertVideoDataUseCaseImpl
+import com.example.data.usecase.UploadVideoUseCaseImpl
 import com.example.domain.usecase.DeleteVideoDataUseCase
 import com.example.domain.usecase.GetVideoListUseCase
 import com.example.domain.usecase.InsertVideoDataUseCase
+import com.example.domain.usecase.UploadVideoUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -23,13 +25,18 @@ abstract class UseCaseModule {
 
     @Binds
     @ViewModelScoped
-    abstract fun provideInsertVideoUseCase(insertVideoDataUseCaseImpl: InsertVideoDataUseCaseImpl): InsertVideoDataUseCase
+    abstract fun bindInsertVideoUseCase(insertVideoDataUseCaseImpl: InsertVideoDataUseCaseImpl): InsertVideoDataUseCase
 
     @Binds
     @ViewModelScoped
-    abstract fun provideDeleteVideoUseCase(deleteVideoDataUseCaseImpl: DeleteVideoDataUseCaseImpl): DeleteVideoDataUseCase
+    abstract fun bindDeleteVideoUseCase(deleteVideoDataUseCaseImpl: DeleteVideoDataUseCaseImpl): DeleteVideoDataUseCase
 
     @Binds
     @ViewModelScoped
-    abstract fun provideGetVideoListUseCase(getVideoListUseCaseImpl: GetVideoListUseCaseImpl): GetVideoListUseCase
+    abstract fun bindGetVideoListUseCase(getVideoListUseCaseImpl: GetVideoListUseCaseImpl): GetVideoListUseCase
+
+    @Binds
+    @ViewModelScoped
+    abstract fun bindUploadVideoUseCase(uploadVideoUseCaseImpl: UploadVideoUseCaseImpl): UploadVideoUseCase
+
 }

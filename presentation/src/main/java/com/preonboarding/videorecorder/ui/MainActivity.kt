@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.example.domain.model.Video
 import com.preonboarding.videorecorder.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,6 +21,16 @@ class MainActivity : AppCompatActivity() {
         binding.vm = mainViewModel
         binding.lifecycleOwner = this
         mainViewModel.getMyVideoList()
+        binding.videoRecyclerView.setOnClickListener {
+            val cur = System.currentTimeMillis()
+            mainViewModel.uploadVideoList(
+                Video(
+                    "$cur.mp4",
+                    cur,
+                    "content://media/external/video/media/29"
+                )
+            )
+        }
 
         goToCamera()
     }

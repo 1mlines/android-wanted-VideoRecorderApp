@@ -14,4 +14,10 @@ interface VideoRepository {
     suspend fun deleteVideo(name: String)
 
     suspend fun getVideoList(): FirebaseResponse<List<Video>>
+
+    suspend fun uploadVideo(video: Video): FirebaseResponse<Nothing>
+
+    suspend fun deleteVideoFirestore(video: Video): FirebaseResponse<Nothing>
+
+    suspend fun deleteVideoStorage(video: Video): FirebaseResponse<Nothing>
 }

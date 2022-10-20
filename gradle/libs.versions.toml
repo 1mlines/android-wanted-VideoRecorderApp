@@ -18,7 +18,6 @@ runtimeKtx = "2.4.1"
 viewModelKtx = "2.4.1"
 activityKtx= "1.5.1"
 camerax = "1.1.0-beta02"
-activityKtx = "1.5.1"
 firebaseBom = "30.5.0"
 firestore = "24.4.0"
 firebaseStorage = "20.1.0"
@@ -69,7 +68,6 @@ camera-extensions = {group = "androidx.camera", name = "camera-extensions", vers
 
 [bundles]
 room = ["room-runtime", "room-ktx"]
-room = ["room-runtime","room-ktx"]
 cameraX = ["camera-core", "camera-camera2", "camera-lifecycle", "camera-video", "camera-view", "camera-extensions"]
 
 
