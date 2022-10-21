@@ -156,7 +156,7 @@ class CameraActivity : AppCompatActivity() {
 
                             // url 값 넘겨주기
                             val intent = Intent(this, MainActivity::class.java).apply {
-                                putExtra("uri", "${recordEvent.outputResults.outputUri}")
+                                putExtra("url", "${recordEvent.outputResults.outputUri}")
                                 //Log.e("카메라 테스트", "captureVideo: $currentUri",)
                                 Log.e("카메라 테스트222", "${recordEvent.outputResults.outputUri}",)
                             }

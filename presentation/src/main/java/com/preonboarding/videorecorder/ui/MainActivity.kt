@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private fun getRecordUrlData() {
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
-                val address = it.data?.getStringExtra("uri") ?: ""
+                val address = it.data?.getStringExtra("url") ?: ""
                 binding.urlTextView.text = address
             }
         }
