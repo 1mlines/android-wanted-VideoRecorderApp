@@ -74,4 +74,13 @@ dependencies {
 
     //CameraX
     implementation(libs.bundles.cameraX)
+
+    //firebase
+    implementation(libs.firebase.bom)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+
+    // paging3
+    implementation(libs.paging)
+    implementation(libs.paging.runtime)
 }

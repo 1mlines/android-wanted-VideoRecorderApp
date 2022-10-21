@@ -20,9 +20,9 @@ class LocalDataSource @Inject constructor(
         }
     }
 
-    suspend fun deleteVideoData(id: Long) {
+    suspend fun deleteVideoData(name: String) {
         videoDatabase.withTransaction {
-            videoDao.deleteVideoData(id = id)
+            videoDao.deleteVideoData(name = name)
         }
     }
 }
