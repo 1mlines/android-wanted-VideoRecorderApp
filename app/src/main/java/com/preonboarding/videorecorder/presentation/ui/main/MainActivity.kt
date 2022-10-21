@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -16,6 +17,8 @@ import com.preonboarding.videorecorder.presentation.base.BaseActivity
 import com.preonboarding.videorecorder.presentation.ui.play.PlayActivity
 import com.preonboarding.videorecorder.presentation.ui.record.RecordActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
@@ -45,7 +48,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             }, deleteClick = {
                 deleteClick(it)
             }, itemLongClick = { uri ->
-                play(uri)
+                playPlayer(uri)
             }
             )
             rvRecordList.adapter = mainAdapter
@@ -60,7 +63,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         exoPlayer = ExoPlayer.Builder(this).build()
     }
 
-    private fun play(videoUri: String): ExoPlayer {
+    private fun playPlayer(videoUri: String): ExoPlayer {
         mediaSource = ProgressiveMediaSource.Factory(factory)
             .createMediaSource(MediaItem.fromUri(Uri.parse(videoUri)))
 
@@ -68,6 +71,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             setMediaSource(mediaSource)
             prepare()
             play()
+
+            lifecycleScope.launch{
+                delay(5000L)
+                pausePlayer()
+            }
         }
         return exoPlayer
     }
@@ -84,6 +92,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         startActivity(intent)
     }
 
+    private fun pausePlayer() {
+        exoPlayer.apply {
+            seekTo(0)
+            playWhenReady = false
+        }
+    }
+
     private fun deleteClick(video: Video) {
         viewModel.deleteVideo(video)
     }
@@ -95,10 +110,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onPause() {
         super.onPause()
-        exoPlayer.apply {
-            seekTo(0)
-            playWhenReady = false
-        }
+        pausePlayer()
     }
 
     override fun onDestroy() {
