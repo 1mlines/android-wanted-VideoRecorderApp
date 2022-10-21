@@ -103,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
                 val uri = it.data?.getStringExtra("url") ?: ""
-                binding.urlTextView.text = uri
+
                 val cur = DateUtil.getTime()
                 mainViewModel.uploadVideoList(
                     Video(
