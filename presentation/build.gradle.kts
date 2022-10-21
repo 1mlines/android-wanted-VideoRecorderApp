@@ -83,4 +83,7 @@ dependencies {
     // paging3
     implementation(libs.paging)
     implementation(libs.paging.runtime)
+
+    //exoplayer
+    implementation(libs.bundles.exoplayer)
 }

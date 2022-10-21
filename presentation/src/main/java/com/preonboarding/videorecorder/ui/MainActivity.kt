@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.preonboarding.videorecorder.databinding.ActivityMainBinding
 import com.preonboarding.videorecorder.ui.adapter.VideoListPagingAdapter
 import com.preonboarding.videorecorder.util.DateUtil
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -102,7 +103,7 @@ class MainActivity : AppCompatActivity() {
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             if (it.resultCode == RESULT_OK) {
                 val uri = it.data?.getStringExtra("url") ?: ""
-                binding.urlTextView.text = uri
+
                 val cur = DateUtil.getTime()
                 mainViewModel.uploadVideoList(
                     Video(
@@ -119,5 +120,16 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, CameraActivity::class.java)
             activityResultLauncher.launch(intent)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.videoRecyclerView.initializePlayer()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        binding.videoRecyclerView.releasePlayer()
     }
 }

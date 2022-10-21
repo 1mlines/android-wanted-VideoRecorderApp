@@ -16,13 +16,14 @@ room = "2.4.3"
 coroutine = "1.6.1"
 runtimeKtx = "2.4.1"
 viewModelKtx = "2.4.1"
-activityKtx= "1.5.1"
+activityKtx = "1.5.1"
 firebaseBom = "30.5.0"
 firestore = "24.4.0"
 firebaseStorage = "20.1.0"
 paging = "3.1.1"
 googleServices = "4.3.14"
 camerax = "1.1.0-beta03"
+exoPlayer = "2.18.1"
 
 [libraries]
 
@@ -56,21 +57,25 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firestore" }
 firebase-storage = { group = "com.google.firebase", name = "firebase-storage-ktx", version.ref = "firebaseStorage" }
 
-paging-runtime = {group = "androidx.paging", name = "paging-runtime", version.ref = "paging"}
+paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "paging" }
 paging = { group = "androidx.paging", name = "paging-common", version.ref = "paging" }
 
-camera-core = {group = "androidx.camera", name = "camera-core", version.ref = "camerax"}
-camera-camera2 = {group = "androidx.camera", name = "camera-camera2", version.ref = "camerax"}
-camera-lifecycle = {group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax"}
-camera-video = {group = "androidx.camera", name = "camera-video", version.ref = "camerax"}
-camera-view = {group = "androidx.camera", name = "camera-view", version.ref = "camerax"}
-camera-extensions = {group = "androidx.camera", name = "camera-extensions", version.ref = "camerax"}
+camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }
+camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camerax" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camerax" }
+camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "camerax" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camerax" }
+camera-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "camerax" }
+
+exoplayer-core = { group = "com.google.android.exoplayer", name = "exoplayer-core", version.ref = "exoPlayer" }
+exoplayer-ui = { group = "com.google.android.exoplayer", name = "exoplayer-ui", version.ref = "exoPlayer" }
+exoplayer-dash = { group = "com.google.android.exoplayer", name = "exoplayer-dash", version.ref = "exoPlayer" }
 
 
 [bundles]
 room = ["room-runtime", "room-ktx"]
 cameraX = ["camera-core", "camera-camera2", "camera-lifecycle", "camera-video", "camera-view", "camera-extensions"]
-
+exoplayer = ["exoplayer-core", "exoplayer-ui", "exoplayer-dash"]
 
 
 [plugins]
@@ -81,4 +86,4 @@ kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-gradle-plugin = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
-google-services = {id = "com.google.gms.google-services", version.ref = "googleServices"}
+google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
