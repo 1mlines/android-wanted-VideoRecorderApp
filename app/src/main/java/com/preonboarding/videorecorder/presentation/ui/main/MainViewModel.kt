@@ -22,10 +22,10 @@ class MainViewModel @Inject constructor(
     private val _videoList = MutableLiveData<List<Video>>().apply {
         value =
             listOf(
-                Video(1, "asdf", "2020-02-22"),
-                Video(2, "qwer", "2020-02-22"),
-                Video(3, "zxcv", "2020-02-22"),
-                Video(4, "qaz", "2020-02-22")
+                Video(1, "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4", "2020-02-22"),
+                Video(2, "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4", "2020-02-22"),
+                Video(3, "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4", "2020-02-22"),
+                Video(4, "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4", "2020-02-22")
             )
     }
     val videoList: LiveData<List<Video>> get() = _videoList
