@@ -11,6 +11,8 @@ object DateUtil {
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
 
+    private val minuteAndSecondFormat = SimpleDateFormat("mm:ss")
+
     fun getCurrentTime(): String {
         val timeStamp = Timestamp(System.currentTimeMillis())
 
@@ -21,5 +23,11 @@ object DateUtil {
         val timeStamp = Timestamp(System.currentTimeMillis())
 
         return timeStamp.time
+    }
+
+    fun convertMinuteAndSeconds(millis: Long): String {
+        val timeStamp = Timestamp(millis)
+
+        return minuteAndSecondFormat.format(timeStamp)
     }
 }

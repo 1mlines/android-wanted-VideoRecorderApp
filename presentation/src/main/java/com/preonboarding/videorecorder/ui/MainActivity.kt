@@ -120,4 +120,15 @@ class MainActivity : AppCompatActivity() {
             activityResultLauncher.launch(intent)
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.videoRecyclerView.initializePlayer()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        binding.videoRecyclerView.releasePlayer()
+    }
 }
