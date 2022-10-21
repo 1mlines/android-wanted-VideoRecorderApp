@@ -19,12 +19,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:src="@drawable/ic_baseline_autorenew_24"
-        android:contentDescription="changeLens" />
+        android:contentDescription="@string/changelens" />
 
     <Button
         android:id="@+id/video_capture_button"
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
         android:layout_marginHorizontal="50dp"
         android:elevation="2dp"

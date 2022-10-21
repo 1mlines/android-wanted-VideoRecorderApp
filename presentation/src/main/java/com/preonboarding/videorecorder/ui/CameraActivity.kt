@@ -8,6 +8,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -20,12 +21,16 @@ import androidx.camera.video.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
+import androidx.lifecycle.lifecycleScope
 import com.preonboarding.videorecorder.databinding.ActivityCameraBinding
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import com.preonboarding.videorecorder.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CameraActivity : AppCompatActivity() {
 
@@ -73,85 +78,95 @@ class CameraActivity : AppCompatActivity() {
     }
 
     private fun captureVideo() {
-        val videoCapture = this.videoCapture ?: return
-        binding.videoCaptureButton.isEnabled = false
-        val curRecording = recording
+            val videoCapture = this.videoCapture ?: return
+            binding.videoCaptureButton.isEnabled = false
+            val curRecording = recording
 
-        if (curRecording != null) {
-            curRecording.stop()
-            recording = null
-            return
-        }
-
-        val name = SimpleDateFormat(FILENAME_FORMAT, Locale.US)
-            .format(System.currentTimeMillis())
-
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-            put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
-            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Video.Media.RELATIVE_PATH,
-                    "Movies/CameraX-Video")
+            if (curRecording != null) {
+                curRecording.stop()
+                recording = null
+                return
             }
-        }
 
-        val mediaStoreOutputOptions = MediaStoreOutputOptions
-            .Builder(contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
-            .setContentValues(contentValues)
-            .build()
+            val name = SimpleDateFormat(FILENAME_FORMAT, Locale.KOREAN)
+                .format(System.currentTimeMillis())
 
-        // uri 생성
-        val currentUri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues)
-        Log.e(TAG, "captureVideo: $currentUri")
-
-        recording = videoCapture.output
-            .prepareRecording(this, mediaStoreOutputOptions)
-            .apply {
-                if (PermissionChecker.checkSelfPermission(this@CameraActivity,
-                        Manifest.permission.RECORD_AUDIO) ==
-                    PermissionChecker.PERMISSION_GRANTED)
-                {
-                    withAudioEnabled()
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+                put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    put(
+                        MediaStore.Video.Media.RELATIVE_PATH,
+                        "Movies/CameraX-Video"
+                    )
                 }
             }
-            .start(ContextCompat.getMainExecutor(this)) { recordEvent ->
-                when(recordEvent) {
-                    is VideoRecordEvent.Start -> {
-                        binding.videoCaptureButton.apply {
-                            text = getString(R.string.stop_capture)
-                            isEnabled = true
-                        }
-                    }
-                    is VideoRecordEvent.Finalize -> {
-                        if (!recordEvent.hasError()) {
-                            val msg = "Video capture succeeded: " +
-                                    "${recordEvent.outputResults.outputUri}"
-                            Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
-                                .show()
-                            Log.d(TAG, msg)
 
-                        } else {
-                            recording?.close()
-                            recording = null
-                            Log.e(TAG, "Video capture ends with error: " +
-                                    "${recordEvent.error}")
-                        }
-                        binding.videoCaptureButton.apply {
-                            text = getString(R.string.start_capture)
-                            isEnabled = true
-                        }
+            val mediaStoreOutputOptions = MediaStoreOutputOptions
+                .Builder(contentResolver, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
+                .setContentValues(contentValues)
+                .build()
 
-                        // url 값 넘겨주기
-                        val intent = Intent(this, MainActivity::class.java).apply {
-                            putExtra("url", "$currentUri")
-                            Log.e("카메라 테스트", "captureVideo: $currentUri", )
-                        }
-                        setResult(RESULT_OK, intent)
-                        if (!isFinishing) finish()
+            // uri 생성
+            // MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            //val externalUri = MediaStore.Video.Media.getContentUri("external")
+            //val currentUri = contentResolver.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues)!!
+            //Log.e(TAG, "captureVideo: $currentUri")
 
+            recording = videoCapture.output
+                .prepareRecording(this, mediaStoreOutputOptions)
+                .apply {
+                    if (PermissionChecker.checkSelfPermission(
+                            this@CameraActivity,
+                            Manifest.permission.RECORD_AUDIO
+                        ) ==
+                        PermissionChecker.PERMISSION_GRANTED
+                    ) {
+                        withAudioEnabled()
                     }
                 }
-            }
+                .start(ContextCompat.getMainExecutor(this)) { recordEvent ->
+                    when (recordEvent) {
+                        is VideoRecordEvent.Start -> {
+                            binding.videoCaptureButton.apply {
+                                text = getString(R.string.stop_capture)
+                                isEnabled = true
+                            }
+                        }
+                        is VideoRecordEvent.Finalize -> {
+                            if (!recordEvent.hasError()) {
+                                val msg = "Video capture succeeded: " +
+                                        "${recordEvent.outputResults.outputUri}"
+                                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT)
+                                    .show()
+                                Log.d(TAG, msg)
+
+                            } else {
+                                recording?.close()
+                                recording = null
+                                Log.e(
+                                    TAG, "Video capture ends with error: " +
+                                            "${recordEvent.error}"
+                                )
+                            }
+                            binding.videoCaptureButton.apply {
+                                text = getString(R.string.start_capture)
+                                isEnabled = true
+                            }
+
+                            // url 값 넘겨주기
+                            val intent = Intent(this, MainActivity::class.java).apply {
+                                putExtra("uri", "${recordEvent.outputResults.outputUri}")
+                                //Log.e("카메라 테스트", "captureVideo: $currentUri",)
+                                Log.e("카메라 테스트222", "${recordEvent.outputResults.outputUri}",)
+                            }
+                            setResult(RESULT_OK, intent)
+                            if (!isFinishing) finish()
+
+                        }
+                    }
+
+        }
     }
 
     private fun startCamera(defaultCameraFacing: CameraSelector) {
@@ -167,7 +182,7 @@ class CameraActivity : AppCompatActivity() {
 
             val recorder = Recorder.Builder()
                 // 화질 설정 (비디오)
-                .setQualitySelector(QualitySelector.from(Quality.HIGHEST))
+                .setQualitySelector(QualitySelector.from(Quality.HD))
                 .build()
             videoCapture = VideoCapture.withOutput(recorder)
 
