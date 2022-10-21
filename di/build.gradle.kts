@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     kotlin("kapt")
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -53,4 +54,9 @@ dependencies {
     // hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+
+    //firebase
+    implementation(libs.firebase.bom)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
 }

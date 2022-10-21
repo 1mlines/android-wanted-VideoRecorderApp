@@ -11,15 +11,15 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class VideoEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long,
-    @ColumnInfo(name = "uri") val uri: String,
-    @ColumnInfo(name = "date") val date: String
+    @PrimaryKey val name: String,
+    @ColumnInfo(name = "publishedAt") val publishedAt: Long,
+    @ColumnInfo(name = "uri") val uri: String
 ) {
     companion object {
         val EMPTY = VideoEntity(
-            id = 0,
-            uri = "",
-            date = ""
+            name = "",
+            publishedAt = 0L,
+            uri = ""
         )
     }
 }

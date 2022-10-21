@@ -9,16 +9,16 @@ import com.example.domain.model.Video
  */
 fun Video.toEntity(): VideoEntity {
     return VideoEntity(
-        id = this.id,
+        name = this.name,
         uri = this.uri,
-        date = this.date
+        publishedAt = this.publishedAt
     )
 }
 
 fun VideoEntity.toModel(): Video {
     return Video(
-        id = this.id,
+        name = this.name,
         uri = this.uri,
-        date = this.date
+        publishedAt = this.publishedAt
     )
 }

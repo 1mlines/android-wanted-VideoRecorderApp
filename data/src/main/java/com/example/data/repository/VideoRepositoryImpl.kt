@@ -1,9 +1,13 @@
 package com.example.data.repository
 
-import com.example.data.model.toEntity
+import androidx.paging.PagingData
 import com.example.data.source.local.LocalDataSource
+import com.example.data.source.remote.VideoRemoteDataSource
+import com.example.domain.model.FirebaseResponse
+import com.example.domain.model.FirebaseState
 import com.example.domain.model.Video
 import com.example.domain.repository.VideoRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 /**
@@ -11,13 +15,26 @@ import javax.inject.Inject
  * @Time 2:31 PM
  */
 class VideoRepositoryImpl @Inject constructor(
-    private val localDataSource: LocalDataSource
+    private val videoRemoteDataSource: VideoRemoteDataSource,
 ) : VideoRepository {
-    override suspend fun insertVideo(video: Video) {
-        return localDataSource.insertVideoData(videoEntity = video.toEntity())
+
+    override fun getVideoList(): Flow<PagingData<Video>> =
+        videoRemoteDataSource.getVideoList()
+
+    override suspend fun uploadVideo(video: Video): FirebaseResponse<Nothing> {
+        val result = videoRemoteDataSource.uploadVideoStorage(video)
+        return if (result.state == FirebaseState.SUCCESS) {
+            videoRemoteDataSource.uploadVideoFirestore(video)
+        } else {
+            result
+        }
     }
 
-    override suspend fun deleteVideo(id: Long) {
-        return localDataSource.deleteVideoData(id = id)
-    }
+    override suspend fun deleteVideoStorage(video: Video): FirebaseResponse<Nothing> =
+        videoRemoteDataSource.deleteVideoStorage(video)
+
+
+    override suspend fun deleteVideoFirestore(video: Video): FirebaseResponse<Nothing> =
+        videoRemoteDataSource.deleteVideoFirestore(video)
+
 }
