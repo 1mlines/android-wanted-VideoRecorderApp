@@ -12,20 +12,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <Button
         android:id="@+id/changeLensButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_baseline_autorenew_24"
-        android:contentDescription="@string/changelens" />
+        android:layout_marginBottom="10dp"
+        android:layout_marginHorizontal="50dp"
+        android:elevation="2dp"
+        android:text="@string/changelens"
+        app:layout_constraintBottom_toTopOf="@id/video_capture_button"/>
 
     <Button
         android:id="@+id/video_capture_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="30dp"
         android:layout_marginHorizontal="50dp"
         android:elevation="2dp"
         android:text="@string/start_capture"
