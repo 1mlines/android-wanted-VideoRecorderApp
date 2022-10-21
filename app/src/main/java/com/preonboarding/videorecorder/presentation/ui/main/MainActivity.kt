@@ -1,8 +1,14 @@
 package com.preonboarding.videorecorder.presentation.ui.main
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.preonboarding.videorecorder.R
 import com.preonboarding.videorecorder.databinding.ActivityMainBinding
 import com.preonboarding.videorecorder.domain.model.Video
@@ -15,7 +21,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     override val layoutResourceId: Int = R.layout.activity_main
     private val viewModel: MainViewModel by viewModels()
-    lateinit var mainAdapter : MainAdapter
+    lateinit var mainAdapter: MainAdapter
+
+    lateinit var factory: DataSource.Factory
+    lateinit var mediaSource: ProgressiveMediaSource
+    lateinit var exoPlayer: ExoPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +44,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 itemClick(it)
             }, deleteClick = {
                 deleteClick(it)
+            }, itemLongClick = { uri ->
+                play(uri)
             }
             )
             rvRecordList.adapter = mainAdapter
@@ -41,6 +53,23 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 mainAdapter.submitList(it)
             }
         }
+    }
+
+    private fun initPlay() {
+        factory = DefaultDataSource.Factory(this)
+        exoPlayer = ExoPlayer.Builder(this).build()
+    }
+
+    private fun play(videoUri: String): ExoPlayer {
+        mediaSource = ProgressiveMediaSource.Factory(factory)
+            .createMediaSource(MediaItem.fromUri(Uri.parse(videoUri)))
+
+        exoPlayer.apply {
+            setMediaSource(mediaSource)
+            prepare()
+            play()
+        }
+        return exoPlayer
     }
 
     private fun setUpDataBinding() {
@@ -59,8 +88,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         viewModel.deleteVideo(video)
     }
 
+    override fun onResume() {
+        super.onResume()
+        initPlay()
+    }
+
     override fun onPause() {
         super.onPause()
-        mainAdapter.exoPlayer.pause()
+        exoPlayer.apply {
+            seekTo(0)
+            playWhenReady = false
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        exoPlayer.release()
     }
 }
