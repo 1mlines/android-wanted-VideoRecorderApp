@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.preonboarding.videorecorder.databinding.ActivityMainBinding
 import com.preonboarding.videorecorder.ui.adapter.VideoListPagingAdapter
 import com.preonboarding.videorecorder.util.DateUtil
+
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

@@ -25,6 +25,12 @@ object DateUtil {
         return timeStamp.time
     }
 
+    fun convert(millis: Long): String {
+        val timeStamp = Timestamp(millis)
+
+        return dateFormat.format(timeStamp)
+    }
+
     fun convertMinuteAndSeconds(millis: Long): String {
         val timeStamp = Timestamp(millis)
 
