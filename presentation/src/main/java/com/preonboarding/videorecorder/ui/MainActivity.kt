@@ -5,6 +5,7 @@ import android.database.Cursor
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
+import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -54,6 +55,11 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 mainViewModel.videoList.collectLatest {
                     adapter.submitData(it)
+                    if(adapter.itemCount == 0){
+                        binding.emptyTextView.visibility = View.VISIBLE
+                    }else{
+                        binding.emptyTextView.visibility = View.GONE
+                    }
                 }
             }
         }
