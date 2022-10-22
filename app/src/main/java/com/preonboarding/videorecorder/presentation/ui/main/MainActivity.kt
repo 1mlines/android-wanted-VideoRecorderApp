@@ -16,7 +16,6 @@ import com.preonboarding.videorecorder.R
 import com.preonboarding.videorecorder.databinding.ActivityMainBinding
 import com.preonboarding.videorecorder.domain.model.Video
 import com.preonboarding.videorecorder.presentation.base.BaseActivity
-import com.preonboarding.videorecorder.presentation.ui.play.PlayActivity
 import com.preonboarding.videorecorder.presentation.ui.playvideo.VideoPlayActivity
 import com.preonboarding.videorecorder.presentation.ui.record.RecordActivity
 import dagger.hilt.android.AndroidEntryPoint
