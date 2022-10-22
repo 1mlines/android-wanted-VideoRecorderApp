@@ -4,7 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -24,18 +26,17 @@ import kotlinx.coroutines.launch
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     override val layoutResourceId: Int = R.layout.activity_main
     private val viewModel: MainViewModel by viewModels()
-    lateinit var mainAdapter: MainAdapter
+    private lateinit var mainAdapter: MainAdapter
 
     lateinit var factory: DataSource.Factory
-    lateinit var mediaSource: ProgressiveMediaSource
-    lateinit var exoPlayer: ExoPlayer
+    private lateinit var mediaSource: ProgressiveMediaSource
+    private lateinit var exoPlayer: ExoPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.viewModel = viewModel
-        setUpDataBinding()
-
         initView()
+        setUpDataBinding()
     }
 
     private fun initView() {
@@ -52,9 +53,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             }
             )
             rvRecordList.adapter = mainAdapter
-            viewModel!!.videoList.observe(this@MainActivity) {
-                mainAdapter.submitList(it)
-            }
         }
     }
 
@@ -72,7 +70,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             prepare()
             play()
 
-            lifecycleScope.launch{
+            lifecycleScope.launch {
                 delay(5000L)
                 pausePlayer()
             }
@@ -81,8 +79,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     private fun setUpDataBinding() {
-        viewModel.videoList.observe(this) {
-//            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+        this.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.videoList.collect {
+                    mainAdapter.submitList(it)
+                }
+            }
         }
     }
 
