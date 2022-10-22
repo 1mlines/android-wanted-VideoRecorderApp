@@ -1,6 +1,7 @@
 package com.preonboarding.videorecorder.custom
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Point
 import android.util.AttributeSet
 import android.view.View
@@ -9,6 +10,8 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,6 +23,8 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.*
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.preonboarding.videorecorder.R
+import com.preonboarding.videorecorder.ui.VideoActivity
 import com.preonboarding.videorecorder.ui.adapter.ExoViewHolder
 import com.preonboarding.videorecorder.util.DateUtil
 import kotlinx.coroutines.*
@@ -74,7 +79,38 @@ class CustomExoPlayerView : RecyclerView {
         initRecyclerViewListener()
     }
 
-    fun playCurrentPosition(isEndOfList: Boolean) {
+    private fun initRecyclerViewListener() {
+        addOnScrollListener(object : OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                if (newState == SCROLL_STATE_IDLE) {
+                    val position = if (!recyclerView.canScrollVertically(1)) {
+                        playCurrentPosition(true)
+                    } else {
+                        playCurrentPosition(false)
+                    }
+
+                    if (position != -1) {
+                        bindPlayer()
+                    }
+                }
+            }
+        })
+
+        addOnChildAttachStateChangeListener(object : OnChildAttachStateChangeListener {
+            override fun onChildViewAttachedToWindow(view: View) {
+            }
+
+            override fun onChildViewDetachedFromWindow(view: View) {
+                if (viewHolderParent == view) {
+                    resetPlayerView()
+                }
+            }
+        })
+    }
+
+    fun playCurrentPosition(isEndOfList: Boolean): Int {
         val targetPosition: Int = if (!isEndOfList) {
             val startPosition =
                 (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
@@ -85,7 +121,7 @@ class CustomExoPlayerView : RecyclerView {
             }
 
             if (startPosition < 0 || endPosition < 0) {
-                return
+                return -1
             }
 
             if (startPosition != endPosition) {
@@ -101,38 +137,63 @@ class CustomExoPlayerView : RecyclerView {
         }
 
         if (targetPosition == playPosition) {
-            return
+            return playPosition
         }
 
         playPosition = targetPosition
 
         if (exoPlayerView == null) {
-            return
+            return -1
         }
 
-        removePlayerView()
+        return playPosition
+    }
 
+    private fun bindPlayer() {
         val currentPosition =
-            targetPosition - (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            playPosition - (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
 
-        val child = getChildAt(currentPosition) ?: return
-        val exoViewHolder = getChildViewHolder(child) as? ExoViewHolder
-
-        if (exoViewHolder == null) {
-            playPosition = -1
-            return
-        }
+        val exoViewHolder = getExoViewHolder(currentPosition) ?: return
 
         playerViewContainer = exoViewHolder.binding.playerViewContainer
         progressBar = exoViewHolder.binding.progressBar
         viewHolderParent = exoViewHolder.itemView
         durationText = exoViewHolder.binding.durationText
 
-        val video = getItem(targetPosition)
+        val video = getItem(currentPosition)
+
+        exoViewHolder.binding.root.setOnClickListener {
+            startActivity(
+                context,
+                Intent(context, VideoActivity::class.java).apply {
+                    putExtra(
+                        context.getString(R.string.mediaBundle),
+                        bundleOf(
+                            context.getString(R.string.mediaUri) to video.uri,
+                            context.getString(R.string.mediaCurrentPosition) to player?.currentPosition
+                        )
+                    )
+                },
+                null
+            )
+        }
 
         exoPlayerListener = playerStateListener()
-
         initializePlayer(video)
+    }
+
+    private fun getExoViewHolder(currentPosition: Int): ExoViewHolder? {
+        val child = getChildAt(currentPosition) ?: return null
+        val exoViewHolder = getChildViewHolder(child) as? ExoViewHolder
+
+        removePlayerView()
+
+        if (exoViewHolder == null) {
+            playPosition = -1
+            return null
+        }
+
+        return exoViewHolder
     }
 
     private fun getVisiblePlayerHeight(playPosition: Int): Int {
@@ -289,33 +350,6 @@ class CustomExoPlayerView : RecyclerView {
 
         defaultExoPlayerHeight = point.x
         defaultScreenHeight = point.y
-    }
-
-    private fun initRecyclerViewListener() {
-        addOnScrollListener(object : OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-
-                if (newState == SCROLL_STATE_IDLE) {
-                    if (!recyclerView.canScrollVertically(1)) {
-                        playCurrentPosition(true)
-                    } else {
-                        playCurrentPosition(false)
-                    }
-                }
-            }
-        })
-
-        addOnChildAttachStateChangeListener(object : OnChildAttachStateChangeListener {
-            override fun onChildViewAttachedToWindow(view: View) {
-            }
-
-            override fun onChildViewDetachedFromWindow(view: View) {
-                if (viewHolderParent == view) {
-                    resetPlayerView()
-                }
-            }
-        })
     }
 
     private fun getItem(position: Int): Video {
