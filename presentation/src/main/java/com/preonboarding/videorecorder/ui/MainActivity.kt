@@ -133,6 +133,7 @@ class MainActivity : AppCompatActivity() {
             )
         cursor?.moveToNext()
 
+        // 정확한 저장 경로 파악
         val path: String? = cursor?.getString(cursor.getColumnIndex("_data"))
 
         cursor?.close()
@@ -142,9 +143,10 @@ class MainActivity : AppCompatActivity() {
         retriever.setDataSource(path)
 
         // 영상에서 1초되는 부분을 썸네일로 지정
-        val asd = retriever.getFrameAtTime(1*1000000)
+        val captureImageTime = retriever.getFrameAtTime(1*1000000)
 
-        //binding.ivTest.setImageBitmap(asd)
+        // 테스트
+        //binding.ivTest.setImageBitmap(captureImageTime)
     }
 
 
