@@ -1,11 +1,14 @@
 package com.preonboarding.videorecorder.ui
 
 import android.content.Intent
+import android.database.Cursor
+import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -113,6 +116,7 @@ class MainActivity : AppCompatActivity() {
                         uri
                     )
                 )
+                createThumbNail(uri)
             }
         }
 
@@ -121,6 +125,30 @@ class MainActivity : AppCompatActivity() {
             activityResultLauncher.launch(intent)
         }
     }
+
+    private fun createThumbNail(uri: String) {
+        val cursor: Cursor? =
+            contentResolver.query(
+                uri.toUri(), null, null, null, null
+            )
+        cursor?.moveToNext()
+
+        // 정확한 저장 경로 파악
+        val path: String? = cursor?.getString(cursor.getColumnIndex("_data"))
+
+        cursor?.close()
+
+        val retriever = MediaMetadataRetriever()
+
+        retriever.setDataSource(path)
+
+        // 영상에서 1초되는 부분을 썸네일로 지정
+        val captureImageTime = retriever.getFrameAtTime(1*1000000)
+
+        // 테스트
+        //binding.ivTest.setImageBitmap(captureImageTime)
+    }
+
 
     override fun onResume() {
         super.onResume()
