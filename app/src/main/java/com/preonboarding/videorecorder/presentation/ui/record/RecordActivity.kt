@@ -21,18 +21,13 @@ import androidx.camera.video.VideoRecordEvent
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.google.common.util.concurrent.ListenableFuture
 import com.preonboarding.videorecorder.R
 import com.preonboarding.videorecorder.databinding.ActivityRecordBinding
 import com.preonboarding.videorecorder.domain.model.Video
 import com.preonboarding.videorecorder.presentation.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.concurrent.ExecutorService
@@ -70,21 +65,11 @@ class RecordActivity : BaseActivity<ActivityRecordBinding>() {
             } else {
                 CameraSelector.DEFAULT_FRONT_CAMERA
             }
-
             startCamera()
         }
 
         binding.videoCaptureButton.setOnClickListener {
             captureVideo()
-        }
-
-        this.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.videoList.collect {
-                    Timber.d("videoList")
-                    Timber.w("$it")
-                }
-            }
         }
 
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -111,7 +96,7 @@ class RecordActivity : BaseActivity<ActivityRecordBinding>() {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4")
             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/CameeraX-Video")
+                put(MediaStore.Video.Media.RELATIVE_PATH, "Movies/CameraX-Video")
             }
         }
 
@@ -146,7 +131,10 @@ class RecordActivity : BaseActivity<ActivityRecordBinding>() {
                             viewModel.saveVideo(
                                 Video(
                                     recordEvent.outputResults.outputUri.toString(),
-                                    SimpleDateFormat(FILENAME_FORMAT, Locale.KOREA).format(System.currentTimeMillis())
+                                    SimpleDateFormat(
+                                        FILENAME_FORMAT,
+                                        Locale.KOREA
+                                    ).format(System.currentTimeMillis())
                                 )
                             )
                         } else {
