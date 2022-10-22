@@ -2,6 +2,7 @@ package com.preonboarding.videorecorder.ui
 
 import android.content.Intent
 import android.database.Cursor
+import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
@@ -30,16 +31,19 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
-    private lateinit var binding: ActivityMainBinding
+    private val binding: ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
     private val mainViewModel: MainViewModel by viewModels()
-    private val adapter: VideoListPagingAdapter by lazy { VideoListPagingAdapter() }
+    private val adapter: VideoListPagingAdapter by lazy { VideoListPagingAdapter(createThumbNail()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         binding.vm = mainViewModel
         binding.lifecycleOwner = this
+
         initRecyclerView()
         getRecordUrlData()
         initData()
@@ -103,22 +107,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getRecordUrlData() {
-        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            if (it.resultCode == RESULT_OK) {
-                val uri = it.data?.getStringExtra("url") ?: ""
+        activityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    val uri = it.data?.getStringExtra("url") ?: ""
 
-                val cur = DateUtil.getTime()
-                mainViewModel.uploadVideoList(
-                    Video(
-                        "$cur.mp4",
-                        cur,
-//                    "content://media/external/video/media/29",
-                        uri
+                    val cur = DateUtil.getTime()
+                    mainViewModel.uploadVideoList(
+                        Video(
+                            "$cur.mp4",
+                            cur,
+                            uri
+                        )
                     )
-                )
-                createThumbNail(uri)
+                }
             }
-        }
 
         binding.recordButton.setOnClickListener {
             val intent = Intent(this, CameraActivity::class.java)
@@ -126,7 +129,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun createThumbNail(uri: String) {
+    private fun createThumbNail(): (String) -> Bitmap? = { uri ->
         val cursor: Cursor? =
             contentResolver.query(
                 uri.toUri(), null, null, null, null
@@ -138,17 +141,17 @@ class MainActivity : AppCompatActivity() {
 
         cursor?.close()
 
-        val retriever = MediaMetadataRetriever()
+        if (path != null) {
+            val retriever = MediaMetadataRetriever()
 
-        retriever.setDataSource(path)
+            retriever.setDataSource(path)
 
-        // 영상에서 1초되는 부분을 썸네일로 지정
-        val captureImageTime = retriever.getFrameAtTime(1*1000000)
-
-        // 테스트
-        //binding.ivTest.setImageBitmap(captureImageTime)
+            // 영상에서 1초되는 부분을 썸네일로 지정
+            retriever.getFrameAtTime(1 * 1000000)
+        } else {
+            null
+        }
     }
-
 
     override fun onResume() {
         super.onResume()

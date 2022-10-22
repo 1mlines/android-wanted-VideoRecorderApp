@@ -1,5 +1,6 @@
 package com.preonboarding.videorecorder.ui.adapter
 
+import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -8,10 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.domain.model.Video
 import com.preonboarding.videorecorder.databinding.RvVideoBinding
 
-class VideoListPagingAdapter : PagingDataAdapter<Video, ExoViewHolder>(diffUtil) {
+class VideoListPagingAdapter(
+    private val thumbnailBlock: (String) -> Bitmap?
+) : PagingDataAdapter<Video, ExoViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExoViewHolder =
-        ExoViewHolder(RvVideoBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ExoViewHolder(
+            RvVideoBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+            thumbnailBlock
+        )
 
     override fun onBindViewHolder(holder: ExoViewHolder, position: Int) {
         getItem(position)?.let { holder.bind(it) }
