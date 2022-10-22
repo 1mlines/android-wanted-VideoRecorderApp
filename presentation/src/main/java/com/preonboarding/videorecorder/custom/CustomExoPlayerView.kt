@@ -69,7 +69,7 @@ class CustomExoPlayerView : RecyclerView {
                 exoPlayer.addListener(exoPlayerListener)
             }
 
-        setDefaultHeight(context)
+//        setDefaultHeight(context)
 
         initRecyclerViewListener()
     }
