@@ -8,28 +8,32 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+
 
     <application
         android:name=".VideoRecorderApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidwantedVideoRecorderApp"
         tools:targetApi="31">
+
         <activity
-            android:name=".presentation.ui.record.RecordActivity"
-            android:exported="false">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
+            android:name=".presentation.ui.playvideo.VideoPlayActivity"
+        android:exported="false">
+
         </activity>
+
         <activity
-            android:name=".presentation.ui.play.PlayActivity"
+            android:name= ".presentation.ui.record.RecordActivity"
             android:exported="false">
+
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -49,3 +53,4 @@
         </activity>
     </application>
 </manifest>
+

@@ -16,7 +16,7 @@ import com.preonboarding.videorecorder.R
 import com.preonboarding.videorecorder.databinding.ActivityMainBinding
 import com.preonboarding.videorecorder.domain.model.Video
 import com.preonboarding.videorecorder.presentation.base.BaseActivity
-import com.preonboarding.videorecorder.presentation.ui.play.PlayActivity
+import com.preonboarding.videorecorder.presentation.ui.playvideo.VideoPlayActivity
 import com.preonboarding.videorecorder.presentation.ui.record.RecordActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -89,8 +89,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     }
 
     private fun itemClick(video: Video) {
-        val intent = Intent(this, PlayActivity::class.java)
-        intent.putExtra("video", video.uri)
+        val intent = Intent(this, VideoPlayActivity::class.java)
+        intent.putExtra("videoUri", video.uri)
         startActivity(intent)
     }
 
