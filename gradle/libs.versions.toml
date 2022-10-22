@@ -1,6 +1,6 @@
 [versions]
 gradle = "7.2.1"
-kotlin = "1.7.10"
+kotlin = "1.7.20"
 android = "7.3.0"
 core-ktx = "1.7.0"
 appcompat = "1.5.1"
@@ -87,3 +87,4 @@ kotlin-gradle-plugin = { id = "org.jetbrains.kotlin:kotlin-gradle-plugin", versi
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
