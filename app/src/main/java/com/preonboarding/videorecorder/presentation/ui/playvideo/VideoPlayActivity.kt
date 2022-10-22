@@ -1,5 +1,6 @@
 package com.preonboarding.videorecorder.presentation.ui.playvideo
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.media.session.MediaSession
 import android.net.Uri
@@ -7,6 +8,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Size
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -19,9 +21,8 @@ class VideoPlayActivity : AppCompatActivity() {
     val binding by lazy { ActivityVideoPlayBinding.inflate(layoutInflater) }
     var player : ExoPlayer ? = null
     val playerView by lazy {  binding.playView }
-    val url = "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
-    val mediaItem by lazy {  MediaItem.fromUri(url) }
-
+    var url : String? = null
+    var mediaItem : MediaItem ?= null
     // Android 24 이하에서 player 해제용
     private var playWhenReady = true
     private var currentWindow = 0
@@ -33,13 +34,9 @@ class VideoPlayActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        val thumbnail: Bitmap =
-            applicationContext.contentResolver.loadThumbnail(
-                Uri.parse(url), Size(640, 480), null)
-
-        binding.iv.setImageBitmap(thumbnail)
-
-    }
+        url = intent.getStringExtra("videoUri") ?: "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"
+        mediaItem = url?.let { MediaItem.fromUri(it) }
+        }
 
     fun initPlay(){
         player = ExoPlayer.Builder(this).build()
@@ -47,7 +44,7 @@ class VideoPlayActivity : AppCompatActivity() {
         binding.playView.player = player
 
         player!!.also {
-            it.setMediaItem(mediaItem)
+            mediaItem?.let { it1 -> it.setMediaItem(it1) }
             it.playWhenReady = playWhenReady
             it.seekTo(currentWindow, playbackPosition)
             it.prepare()

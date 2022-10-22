@@ -1,35 +1,41 @@
 package com.preonboarding.videorecorder.presentation.ui.main
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.preonboarding.videorecorder.domain.model.Video
 import com.preonboarding.videorecorder.domain.usecase.DeleteVideoUseCase
 import com.preonboarding.videorecorder.domain.usecase.GetVideoListUseCase
-import com.preonboarding.videorecorder.domain.usecase.SaveVideoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val getVideoListUseCase: GetVideoListUseCase,
-    private val saveVideoUseCase: SaveVideoUseCase,
-    private val deleteVideoUseCase: DeleteVideoUseCase
-): ViewModel(){
-    private val _videoList = MutableLiveData<List<Video>>()
-    val videoList: LiveData<List<Video>> get() = _videoList
+    private val deleteVideoUseCase: DeleteVideoUseCase,
+) : ViewModel() {
 
-    fun getVideoList() {
-        viewModelScope.launch {
-            _videoList.postValue(getVideoListUseCase.invoke())
-        }
+    private val _videoList = MutableStateFlow<List<Video>>(emptyList())
+    val videoList: StateFlow<List<Video>> get() = _videoList
+
+    init {
+        getVideoList()
     }
 
-    fun saveVideo(video: Video) {
+    private fun getVideoList() {
         viewModelScope.launch {
-            saveVideoUseCase.invoke(video)
+            getVideoListUseCase.invoke().stateIn(
+                viewModelScope,
+                SharingStarted.Lazily,
+                emptyList()
+            ).collectLatest {
+                _videoList.emit(it)
+            }
         }
     }
 

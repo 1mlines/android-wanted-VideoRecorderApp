@@ -7,16 +7,10 @@
     tools:context=".presentation.ui.playvideo.VideoPlayActivity"
     android:gravity="center"
     android:layout_margin="16dp">
-    <ImageView
-        android:id="@+id/iv"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        />
 
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/play_view"
-        android:layout_below="@id/iv"
         android:layout_width="match_parent"
         app:use_controller="true"
         app:controller_layout_id="@layout/custom_player_control_view"
