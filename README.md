@@ -36,6 +36,15 @@
   </table>
 </div>
 
+## 최종 영상
+
+
+https://user-images.githubusercontent.com/45396949/197328880-128a0ec1-2afe-47db-bcd4-e870db6a4850.mp4
+
+- 촬영버튼을 통해 영상을 녹화하여 파이어베이스에 업데이트 합니다.
+- 영상은 RecyclerView Scroll에 따라 미리보기 재생이 시작됩니다. 
+- 영상이 재생될 때 클릭하면 landScape 모드인 비디오화면으로 이동합니다.
+
 ## 김현국
 ### 맡은 역할
 - 아키텍처 설계
