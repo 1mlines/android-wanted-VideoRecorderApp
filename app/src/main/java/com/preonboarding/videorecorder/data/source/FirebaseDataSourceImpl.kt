@@ -48,6 +48,9 @@ class FirebaseDataSourceImpl @Inject constructor(
         firebaseRTDB.reference
             .child(video.date)
             .removeValue()
+            .addOnSuccessListener {
+                firebaseStorage.reference.child(video.date).delete()
+            }
             .addOnFailureListener {
                 throw it
             }
