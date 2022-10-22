@@ -1,11 +1,15 @@
 package com.preonboarding.videorecorder.presentation.ui.playvideo
 
+import android.graphics.Bitmap
 import android.media.session.MediaSession
+import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Size
+import androidx.annotation.RequiresApi
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.util.Util
 import com.preonboarding.videorecorder.databinding.ActivityVideoPlayBinding
@@ -24,19 +28,23 @@ class VideoPlayActivity : AppCompatActivity() {
     private var playbackPosition = 0L
 
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        //
+        val thumbnail: Bitmap =
+            applicationContext.contentResolver.loadThumbnail(
+                Uri.parse(url), Size(640, 480), null)
 
+        binding.iv.setImageBitmap(thumbnail)
 
     }
 
     fun initPlay(){
         player = ExoPlayer.Builder(this).build()
         playerView.player = player
-        binding.playControlView.player = player
+        binding.playView.player = player
 
         player!!.also {
             it.setMediaItem(mediaItem)
@@ -62,7 +70,6 @@ class VideoPlayActivity : AppCompatActivity() {
     }
 
     private fun releasePlayer() {
-        // 플레이어 해제 전, 재생정보 저장 -> 굳이 필요 없을듯...
         player?.run {
             playbackPosition = this.currentPosition
             currentWindow = this.currentMediaItemIndex
@@ -70,6 +77,21 @@ class VideoPlayActivity : AppCompatActivity() {
             release()
         }
         player = null
+    }
+
+
+    override fun onPause() {
+        super.onPause()
+        if (Util.SDK_INT < 24) {
+            releasePlayer()
+        }
+    }
+
+     override fun onStop() {
+        super.onStop()
+        if (Util.SDK_INT >= 24) {
+            releasePlayer()
+        }
     }
 
 
