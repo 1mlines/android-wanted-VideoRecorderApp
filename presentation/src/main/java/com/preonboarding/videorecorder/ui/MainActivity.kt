@@ -2,6 +2,7 @@ package com.preonboarding.videorecorder.ui
 
 import android.content.Intent
 import android.database.Cursor
+import android.media.MediaMetadataRetriever
 import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -115,6 +116,7 @@ class MainActivity : AppCompatActivity() {
                         uri
                     )
                 )
+                createThumbNail(uri)
             }
         }
 
@@ -135,6 +137,14 @@ class MainActivity : AppCompatActivity() {
 
         cursor?.close()
 
+        val retriever = MediaMetadataRetriever()
+
+        retriever.setDataSource(path)
+
+        // 영상에서 1초되는 부분을 썸네일로 지정
+        val asd = retriever.getFrameAtTime(1*1000000)
+
+        //binding.ivTest.setImageBitmap(asd)
     }
 
 
